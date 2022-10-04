@@ -16,6 +16,17 @@ export async function updateUserInfo(userInfo) {
 	)
 }
 
+export async function addNewTaskToUser(user, task) {
+	return await UserModel.findOneAndUpdate(
+		{
+			_id: user._id,
+		},
+		{
+			$push: { tasks: task },
+		},
+	)
+}
+
 export async function createUserInfo(userInfo) {
 	return await UserModel.create(userInfo)
 }

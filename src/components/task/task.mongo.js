@@ -9,6 +9,10 @@ const TaskSchema = new mongoose.Schema({
 	},
 	participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
+	belongTo: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Group',
+	},
 	descriptions: [String],
 })
 
