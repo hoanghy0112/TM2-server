@@ -9,7 +9,6 @@ export async function googleVerifyCallback(
 	let user = await getUserInfo(userProfile.id)
 	if (!user) {
 		const profile = {
-			userID: userProfile.id,
 			givenName: userProfile.name.givenName,
 			familyName: userProfile.name.familyName,
 			photo: userProfile.photos[0].value,

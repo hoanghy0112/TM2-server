@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
 
-const TagSchema = mongoose.Schema({
-	title: String,
-	description: String,
+const TagSchema = new mongoose.Schema({
+	title: { type: String, required: true },
+	description: { type: String, required: false },
 })
 
 const TagModel = mongoose.model('Tag', TagSchema)

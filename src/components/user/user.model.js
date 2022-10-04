@@ -17,8 +17,5 @@ export async function updateUserInfo(userInfo) {
 }
 
 export async function createUserInfo(userInfo) {
-	return await UserModel.create({
-		userID: userInfo.userID,
-		...userInfo,
-	})
+	return await UserModel.create(userInfo)
 }

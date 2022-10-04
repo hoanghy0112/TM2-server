@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
 
-const GroupSchema = mongoose.Schema({
-	name: String,
-	description: String,
+const GroupSchema = new mongoose.Schema({
+	name: { type: String, required: true },
+	description: { type: String, required: false },
 	users: [
 		{
 			type: mongoose.Schema.Types.ObjectId,

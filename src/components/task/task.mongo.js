@@ -1,23 +1,14 @@
 import mongoose from 'mongoose'
 
-const TaskSchema = mongoose.Schema({
-	location: String,
+const TaskSchema = new mongoose.Schema({
+	title: { type: String, required: true },
+	location: { type: String, required: false },
 	time: {
-		from: Date,
-		to: Date,
+		from: { type: Date, required: true },
+		to: { type: Date, required: true },
 	},
-	participants: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
-		},
-	],
-	tags: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Tag',
-		},
-	],
+	participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+	tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
 	descriptions: [String],
 })
 

@@ -1,25 +1,21 @@
 import mongoose from 'mongoose'
 
-const UserModel = mongoose.Schema({
-	userID: {
-		type: String,
-		require: true,
-	},
+const UserModel = new mongoose.Schema({
 	givenName: {
 		type: String,
-		require: true,
+		required: true,
 	},
 	familyName: {
 		type: String,
-		require: true,
+		required: true,
 	},
 	photo: {
 		type: String,
-		require: false,
+		required: false,
 	},
 	email: {
 		type: String,
-		require: false,
+		required: false,
 	},
 	friends: [
 		{
