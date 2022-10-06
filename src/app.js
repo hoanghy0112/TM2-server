@@ -12,11 +12,12 @@ import morgan from 'morgan'
 
 import 'dotenv/config'
 
-import api_v1 from './apiRouter/v1'
+import api from './apiRouter'
 
 import { googleVerifyCallback } from './middleware/passport'
 
 import { GOOGLE_OAUTH_OPTIONS } from './constants/oathOptions'
+import authRouter from './components/auth/auth.router'
 
 const SESSION_NAME = process.env.SESSION_NAME
 const SESSION_SECRET = process.env.SESSION_SECRET
@@ -57,6 +58,8 @@ passport.deserializeUser((obj, done) => {
 
 passport.use(new Strategy(GOOGLE_OAUTH_OPTIONS, googleVerifyCallback))
 
-app.use('/api/v1', api_v1)
+app.use('/auth', authRouter)
+
+app.use('/api', api)
 
 export default app

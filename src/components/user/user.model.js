@@ -1,7 +1,7 @@
 import UserModel from './user.mongo'
 
 export async function getUserInfo(userID) {
-	return await UserModel.findOne({ userID })
+	return await UserModel.findOne({ _id: userID })
 }
 
 export async function updateUserInfo(userInfo) {
@@ -23,6 +23,17 @@ export async function addNewTaskToUser(user, task) {
 		},
 		{
 			$push: { tasks: task },
+		},
+	)
+}
+
+export async function addNewTagToUser(user, tag) {
+	return await UserModel.findOneAndUpdate(
+		{
+			_id: user._id,
+		},
+		{
+			$push: { tags: tag },
 		},
 	)
 }
