@@ -6,9 +6,11 @@ export async function googleVerifyCallback(
 	userProfile,
 	done,
 ) {
+	// console.log({ userProfile })
 	let user = await getUserInfo(userProfile.id)
 	if (!user) {
 		const profile = {
+			userID: userProfile.id,
 			givenName: userProfile.name.givenName,
 			familyName: userProfile.name.familyName,
 			photo: userProfile.photos[0].value,
@@ -16,6 +18,6 @@ export async function googleVerifyCallback(
 		}
 		user = await createUserInfo(profile)
 	}
-	console.log({ user })
+	// console.log({ user })
 	done(null, user)
 }

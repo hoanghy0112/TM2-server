@@ -6,10 +6,10 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY * client/
+COPY ./ ./
 
 USER node
 
 CMD [ "npm", "start" ]
 
-EXPOSE 80
+EXPOSE 3000

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import UserModel from './user.mongo'
 
 export async function getUserInfo(userID) {

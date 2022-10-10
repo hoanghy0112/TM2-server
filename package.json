@@ -6,6 +6,7 @@
   "scripts": {
     "watch": "nodemon --es-module-specifier-resolution=node bin/server.js",
     "start": "node --es-module-specifier-resolution=node bin/server.js",
+    "deploy": "docker build . -t hoanghy/tm2-server && docker push hoanghy/tm2-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "type": "module",
