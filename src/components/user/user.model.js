@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import UserModel from './user.mongo'
 
 export async function getUserInfo(userID) {
-	return await UserModel.findOne({ _id: userID })
+	return await UserModel.findOne({ userID: userID })
 }
 
 export async function updateUserInfo(userInfo) {

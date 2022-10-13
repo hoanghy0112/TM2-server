@@ -5,7 +5,7 @@ import groupRouter from '../components/group/group.router'
 import tagRouter from '../components/tag/tag.router'
 import taskRouter from '../components/task/task.router'
 import userRouter from '../components/user/user.router'
-import { authorizeRouteMiddleware } from '../middleware/site'
+import { authorizeRouteMiddleware } from '../middleware/authentication'
 
 const api = express.Router()
 

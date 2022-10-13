@@ -15,10 +15,12 @@
   "license": "ISC",
   "dependencies": {
     "connect-mongo": "^4.6.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^14.3.2",
     "express": "^4.17.2",
     "express-session": "^1.17.2",
+    "firebase-admin": "^11.1.0",
     "helmet": "^5.0.2",
     "mongoose": "^6.1.8",
     "morgan": "^1.10.0",
