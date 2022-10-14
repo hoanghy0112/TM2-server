@@ -4,14 +4,13 @@ import { getAuth } from 'firebase-admin/auth'
 import { getUserInfo, createUserInfo } from '../components/user/user.model'
 
 export function authorizeRouteMiddleware(req, res, next) {
-	const accessToken = req.headers['authorization']
-	console.log({ accessToken })
+	const [type, accessToken] = req.headers['authorization'].split(' ')
+	// console.log({ type, accessToken })
 	getAuth(firebaseApp)
 		.verifyIdToken(accessToken)
 		.then(async (decodedToken) => {
 			const uid = decodedToken.uid
-			console.log({ uid })
-			// ...
+			// console.log({ uid })
 			let user = await getUserInfo(uid)
 
 			const userProfile = await getAuth().getUser(uid)

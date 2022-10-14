@@ -1,4 +1,5 @@
 import https from 'https'
+import http from 'http'
 import fs from 'fs'
 
 import 'dotenv/config'
@@ -19,7 +20,8 @@ const certificate = fs.readFileSync('./bin/ssl/cert.pem', 'utf8')
 
 var credentials = { key: privateKey, cert: certificate }
 
-const server = https.createServer(credentials, app)
+// const server = https.createServer(credentials, app)
+const server = http.createServer(app)
 
 async function startServer() {
 	await connectMongo()
