@@ -5,10 +5,12 @@ import {
 	httpGetAllTags,
 } from './tag.controller'
 
+import { authorizeRouteMiddleware } from '../../middleware/authentication'
+
 const tagRouter = express.Router()
 
-tagRouter.post('/', httpCreateNewTag)
-tagRouter.get('/', httpGetAllTags)
-tagRouter.get('/:title', httpGetTagByID)
+tagRouter.post('/', authorizeRouteMiddleware, httpCreateNewTag)
+tagRouter.get('/', authorizeRouteMiddleware, httpGetAllTags)
+tagRouter.get('/:title', authorizeRouteMiddleware, httpGetTagByID)
 
 export default tagRouter

@@ -42,3 +42,7 @@ export async function addNewTagToUser(user, tag) {
 export async function createUserInfo(userInfo) {
 	return await UserModel.create(userInfo)
 }
+
+export async function findUserByName(name) {
+	return await UserModel.where('givenName')
+}

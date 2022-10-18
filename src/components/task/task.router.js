@@ -7,12 +7,14 @@ import {
 	httpUpdateTaskByID,
 } from './task.controller'
 
+import { authorizeRouteMiddleware } from '../../middleware/authentication'
+
 const taskRouter = express.Router()
 
-taskRouter.post('/', httpCreateNewTask)
-taskRouter.get('/', httpGetAllTaskOfUser)
-taskRouter.put('/:taskID', httpUpdateTaskByID)
-taskRouter.get('/:taskID', httpGetTaskByID)
-taskRouter.delete('/:taskID', httpDeleteTaskByID)
+taskRouter.post('/', authorizeRouteMiddleware, httpCreateNewTask)
+taskRouter.get('/', authorizeRouteMiddleware, httpGetAllTaskOfUser)
+taskRouter.put('/:taskID', authorizeRouteMiddleware, httpUpdateTaskByID)
+taskRouter.get('/:taskID', authorizeRouteMiddleware, httpGetTaskByID)
+taskRouter.delete('/:taskID', authorizeRouteMiddleware, httpDeleteTaskByID)
 
 export default taskRouter

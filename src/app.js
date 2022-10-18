@@ -65,7 +65,7 @@ app.use(morgan('combined'))
 
 app.use(cookieParser())
 
-app.use('/', authorizeRouteMiddleware)
+// app.use('/', authorizeRouteMiddleware)
 
 app.use('/auth', authRouter)
 
