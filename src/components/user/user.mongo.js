@@ -5,6 +5,7 @@ const UserModel = new mongoose.Schema(
 		userID: {
 			type: String,
 			required: true,
+			unique: true,
 		},
 		givenName: {
 			type: String,
@@ -63,6 +64,5 @@ const UserModel = new mongoose.Schema(
 		},
 	},
 )
-
 
 export default mongoose.model('User', UserModel)
