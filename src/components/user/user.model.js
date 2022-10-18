@@ -47,6 +47,11 @@ export async function findUserByName(name) {
 	const nameRegex = `${name}`
 	return await UserModel.find({
 		// $or: [{ givenName: new RegExp(nameRegex, 'i') }],
-		engName: new RegExp(nameRegex, 'i'),
+		$or: [
+			{ engName: new RegExp(nameRegex, 'i') },
+			{ email: new RegExp(nameRegex, 'i') },
+			{ givenName: new RegExp(nameRegex, 'i') },
+			{ familyName: new RegExp(nameRegex, 'i') },
+		],
 	})
 }
