@@ -15,5 +15,5 @@ export async function httpFindUserByName(req, res) {
 
 	const users = await findUserByName(name)
 
-	return res.status(200).json({ users })
+	return res.status(200).json(users)
 }

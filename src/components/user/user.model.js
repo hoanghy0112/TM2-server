@@ -44,5 +44,13 @@ export async function createUserInfo(userInfo) {
 }
 
 export async function findUserByName(name) {
-	return await UserModel.where('givenName')
+	const nameRegex = `${name}`
+	// return await UserModel.find({
+	// 	$or: [{ name: new RegExp(nameRegex, 'i') }],
+	// })
+
+	return await UserModel.$where(function {
+		const name = `${this.familyName} ${this.givenName}`
+		return new RegExp(nameRegex, "i").test(name)
+	})
 }
