@@ -23,3 +23,7 @@ export async function getAllTaskOfUser(userID) {
 export async function updateTaskByID(taskID, newTask) {
 	return await TaskModel.findOneAndUpdate({ _id: taskID }, newTask)
 }
+
+export async function deleteTaskByID(taskID) {
+	return await TaskModel.remove({ _id: taskID })
+}

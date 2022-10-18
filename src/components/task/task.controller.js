@@ -51,3 +51,9 @@ export async function httpUpdateTaskByID(req, res) {
 
 	return res.status(200).json(await updateTaskByID(taskID, newTask))
 }
+
+export async function httpDeleteTaskByID(req, res) {
+	const taskID = req.params.taskID
+
+	return res.status(200).send()
+}
