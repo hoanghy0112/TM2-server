@@ -2,6 +2,7 @@ import { addNewTagToTask } from '../tag/tag.model'
 import { addNewTaskToUser } from '../user/user.model'
 import {
 	createNewTask,
+	deleteTaskByID,
 	getAllTaskOfUser,
 	getTaskByID,
 	updateTaskByID,
@@ -54,6 +55,8 @@ export async function httpUpdateTaskByID(req, res) {
 
 export async function httpDeleteTaskByID(req, res) {
 	const taskID = req.params.taskID
+
+	await deleteTaskByID(taskID)
 
 	return res.status(200).send()
 }
