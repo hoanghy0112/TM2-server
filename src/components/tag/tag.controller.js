@@ -1,5 +1,5 @@
 import { addNewTagToUser } from '../user/user.model'
-import { createNewTag, getTagByTitle, getAllTagsOfUser } from './tag.model'
+import { createNewTag, getTagByTitle, getAllTagsOfUser, removeTag } from './tag.model'
 import TagModel from './tag.mongo'
 
 export async function httpCreateNewTag(req, res) {
@@ -44,8 +44,23 @@ export async function httpUpdateTag(req, res) {
 	const tagData = req.body.tagData
 	console.log(tagID, tagData)
 	try {
-		await TagModel.findByIdAndUpdate(124, tagData)
+		await TagModel.findByIdAndUpdate(tagID, tagData)
 		return res.status(200).send('Update successfully')
+	} catch (error) {
+		return res.status(500).send('Server error: ' + error.message)
+	}
+}
+
+export async function httpRemoveTag(req, res) {
+	const userID = req.user._id
+	const tagID = req.body.tagID
+	if (!userID || !tagID)
+		return res.status(400).send('Bad request')
+	try {
+		if (await removeTag(userID, tagID))
+			return res.status(200).send('Remove  successfully')
+		else
+			return res.status(400).send('Bad request')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
 	}

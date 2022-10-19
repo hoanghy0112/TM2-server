@@ -3,7 +3,8 @@ import {
 	httpCreateNewTag,
 	httpGetTagByTitle,
 	httpGetAllTags,
-	httpUpdateTag
+	httpUpdateTag,
+	httpRemoveTag
 } from './tag.controller'
 
 import { authorizeRouteMiddleware } from '../../middleware/authentication'
@@ -14,5 +15,5 @@ tagRouter.post('/', authorizeRouteMiddleware, httpCreateNewTag)
 tagRouter.put('/', httpUpdateTag)
 tagRouter.get('/', authorizeRouteMiddleware, httpGetAllTags)
 tagRouter.get('/:title', authorizeRouteMiddleware, httpGetTagByTitle)
-
+tagRouter.delete('/', authorizeRouteMiddleware, httpRemoveTag)
 export default tagRouter
