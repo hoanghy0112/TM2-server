@@ -45,7 +45,6 @@ export async function removeTag(userID, tagID) {
 	if (pos < 0)
 		return false
 	userWithTags.tags.splice(pos, 1)
-	await UserModel.findByIdAndUpdate(userID, {tags: userWithTags.tags})
 	const tag = await TagModel.findById(tagID)
 	const tagsWithTasks = await tag.populate('tasks')
 	tagsWithTasks.tasks.forEach(async task => {
@@ -60,6 +59,7 @@ export async function removeTag(userID, tagID) {
 		task.tags.splice(pos, 1)
 		await TaskModel.findByIdAndUpdate(task._id, {tags: task.tags})
 	})
+	await UserModel.findByIdAndUpdate(userID, {tags: userWithTags.tags})
 	await TagModel.findByIdAndRemove(tagID)
 	return true
 }
