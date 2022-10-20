@@ -64,3 +64,15 @@ export async function deleteTaskByID(userID, taskID) {
 
 	return true
 }
+
+export async function CreateTask(userID, task) {
+	const newTask = await TaskModel.create(task)
+	const user = await UserModel.findById(userID)
+	user.tasks.push(newTask._id)
+	newTask.tags.forEach(async tagID => {
+		const tag = await TagModel.findById(tagID)
+		tag.tasks.push(newTask._id)
+		await TagModel.findByIdAndUpdate(tagID, {tasks: tag.tasks})
+	})
+	await UserModel.findByIdAndUpdate(userID, {tasks: user.tasks})
+}

@@ -6,7 +6,7 @@ export async function createNewTag(tag) {
 	return await TagModel.create(tag)
 }
 
-export async function addNewTagToTask(tag, task) {
+export async function addNewTaskToTag(tag, task) {
 	return await TagModel.findOneAndUpdate(
 		{
 			_id: tag._id,
