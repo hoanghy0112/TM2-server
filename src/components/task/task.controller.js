@@ -54,9 +54,16 @@ export async function httpUpdateTaskByID(req, res) {
 }
 
 export async function httpDeleteTaskByID(req, res) {
-	const taskID = req.params.taskID
-
-	await deleteTaskByID(taskID)
-
-	return res.status(200).send()
+	const taskID = req.body.taskID
+	const userID = req.user._id
+	if (!userID || !taskID)
+		return res.status(400).send('Bad request')
+	try {
+		if (await deleteTaskByID(userID, taskID))
+			return res.status(200).send('Remove  successfully')
+		else
+			return res.status(400).send('Bad request')
+	} catch (error) {
+		return res.status(500).send('Server error: ' + error.message)
+	}
 }
