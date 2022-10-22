@@ -62,10 +62,15 @@ export async function httpGetAllTaskOfUser(req, res) {
 
 export async function httpUpdateTaskByID(req, res) {
 	const taskID = req.params.taskID
-	const newTask = req.body
-	console.log(newTask)
-
-	return res.status(200).json(await updateTaskByID(taskID, newTask))
+	const taskData = req.body
+	if (!taskID || !taskData)
+		return res.status(400).send('Bad request')
+	try {
+		await updateTaskByID(taskID, taskData)
+		return res.status(200).send('Update successfully')
+	} catch (error) {
+		return res.status(500).send('Server error: ' + error.message)
+	}
 }
 
 export async function httpDeleteTaskByID(req, res) {
