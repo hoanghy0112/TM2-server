@@ -1,5 +1,5 @@
-import { addNewTaskToTag } from '../tag/tag.model'
-import { addNewTaskToUser } from '../user/user.model'
+// import { addNewTaskToTag } from '../tag/tag.model'
+// import { addNewTaskToUser } from '../user/user.model'
 import {
 	CreateTask,
 	createNewTask,
@@ -46,18 +46,25 @@ export async function httpCreateNewTask(req, res) {
 
 export async function httpGetTaskByID(req, res) {
 	const taskID = req.params.taskID
-
 	if (!taskID) return res.status(400).send('Bad request')
-
-	const task = await getTaskByID(taskID)
-
-	return res.status(200).json(task)
+	try {
+		const task = await getTaskByID(taskID)
+		return res.status(200).json(task)
+	} catch (error) {
+		return res.status(500).send('Server error: ' + error.message)
+	}
 }
 
 export async function httpGetAllTaskOfUser(req, res) {
 	const userID = req.user._id
-
-	return res.status(200).json(await getAllTaskOfUser(userID))
+	if(!userID) 
+		return res.status(400).send('Bad request')
+	try {
+		const tasks = await getAllTaskOfUser(userID)
+		return res.status(200).json(tasks)
+	} catch (error) {
+		return res.status(500).send('Server error: ' + error.message)
+	}
 }
 
 export async function httpUpdateTaskByID(req, res) {

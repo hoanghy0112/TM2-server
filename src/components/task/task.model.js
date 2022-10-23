@@ -15,9 +15,8 @@ export async function getTaskByID(taskID) {
 }
 
 export async function getAllTaskOfUser(userID) {
-	const user = await UserModel.findOne({ _id: userID })
+	const user = await UserModel.findById(userID)
 	const populatedUser = await user.populate('tasks')
-
 	return populatedUser.tasks
 }
 
