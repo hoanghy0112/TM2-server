@@ -12,8 +12,8 @@ import { authorizeRouteMiddleware } from '../../middleware/authentication'
 const tagRouter = express.Router()
 
 tagRouter.post('/', authorizeRouteMiddleware, httpCreateNewTag)
-tagRouter.put('/', authorizeRouteMiddleware, httpUpdateTag)
-tagRouter.get('/', authorizeRouteMiddleware, httpGetAllTags)
-tagRouter.get('/:title', authorizeRouteMiddleware, httpGetTagByTitle)
-tagRouter.delete('/', authorizeRouteMiddleware, httpRemoveTag)
+tagRouter.get('/all', authorizeRouteMiddleware, httpGetAllTags)
+tagRouter.get('/', authorizeRouteMiddleware, httpGetTagByTitle)
+tagRouter.put('/:tagID', authorizeRouteMiddleware, httpUpdateTag)
+tagRouter.delete('/:tagID', authorizeRouteMiddleware, httpRemoveTag)
 export default tagRouter

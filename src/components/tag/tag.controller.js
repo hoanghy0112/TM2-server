@@ -4,6 +4,7 @@ import {
 	getAllTagsOfUser,
 	removeTag,
 	addNewTagToUser,
+	updateTagByID,
 } from './tag.model'
 import TagModel from './tag.mongo'
 
@@ -18,6 +19,7 @@ export async function httpCreateNewTag(req, res) {
 
 		return res.status(201).json(newTag)
 	} catch (error) {
+		console.log({ error })
 		if (error.code == 11000) {
 			return res.status(409).send(`${tagData.title} tag has already existed`)
 		}
@@ -27,7 +29,7 @@ export async function httpCreateNewTag(req, res) {
 }
 
 export async function httpGetTagByTitle(req, res) {
-	const title = req.params.title
+	const title = req.query.title
 
 	const userID = req.user._id
 
@@ -53,26 +55,28 @@ export async function httpGetAllTags(req, res) {
 }
 
 export async function httpUpdateTag(req, res) {
-	const tagID = req.body.tagID
-	const tagData = req.body.tagData
-	console.log(tagID, tagData)
+	const userID = req.user._id
+	const tagID = req.params.tagID
+	const tagData = req.body
+
 	try {
-		await TagModel.findBtyIdAndUpdate(tagID, tagData)
-		return res.status(200).send('Update successfully')
+		const newTag = await updateTagByID(userID, tagID, tagData)
+		return res.status(202).send(newTag)
 	} catch (error) {
+		if (error.code === 403) return res.status(403).send('Forbidden')
 		return res.status(500).send('Server error: ' + error.message)
 	}
 }
 
 export async function httpRemoveTag(req, res) {
 	const userID = req.user._id
-	const tagID = req.body.tagID
-	if (!userID || !tagID) return res.status(400).send('Bad request')
+	const tagID = req.params.tagID
+
 	try {
-		if (await removeTag(userID, tagID))
-			return res.status(200).send('Remove  successfully')
-		else return res.status(400).send('Bad request')
+		await removeTag(userID, tagID)
+		return res.status(200).send('Remove successfully')
 	} catch (error) {
-		return res.status(500).send('Server error: ' + error.message)
+		if (error.code == 403) return res.status(403).send('Forbidden')
+		return res.status(500).send(error)
 	}
 }

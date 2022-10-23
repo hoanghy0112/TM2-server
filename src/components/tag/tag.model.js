@@ -1,6 +1,7 @@
 import TagModel from './tag.mongo'
 import UserModel from '../user/user.mongo'
 import TaskModel from '../task/task.mongo'
+import { removeVietnameseTones } from '../../utils/converter'
 
 export async function createNewTag(tag) {
 	return await TagModel.create(tag)
@@ -9,13 +10,9 @@ export async function createNewTag(tag) {
 export async function addNewTagToUser(userID, tag) {
 	const allTagOfUser = await getAllTagsOfUser(userID)
 
-	console.log({ allTagOfUser })
-
 	const foundTag = allTagOfUser.find((eachTag) => eachTag.title === tag.title)
 
-	console.log({ foundTag })
-
-	if (!foundTag)
+	if (foundTag)
 		throw {
 			code: 11000,
 			message: 'Tag has already existed',
@@ -43,18 +40,14 @@ export async function addNewTagToTask(tag, task) {
 }
 
 export async function getTagByTitle(userID, title) {
-	const user = await UserModel.findById(userID)
-	const tags = await user.populate('tags')
+	const tags = await getAllTagsOfUser(userID)
 
-	console.log({ tags })
+	const titleRegex = new RegExp(removeVietnameseTones(title), 'i')
 
-	const titleRegex = new RegExp(title, 'i')
-
-	return tags.find((tag) => titleRegex.test(tag.title))
-
-	// for (let i = 0; i < tags.tags.length; i++)
-	// 	if (tags.tags[i].title === title) return tags.tags[i]
-	// return null
+	return (
+		tags.find((tag) => titleRegex.test(removeVietnameseTones(tag.title))) ||
+		[]
+	)
 }
 
 export async function getAllTagsOfUser(userID) {
@@ -64,31 +57,37 @@ export async function getAllTagsOfUser(userID) {
 	return userWithTags.tags
 }
 
+export async function updateTagByID(userID, tagID, tagData) {
+	const allTagOfUser = await getAllTagsOfUser(userID)
+
+	if (allTagOfUser.find((tag) => tag._id == tagID))
+		return TagModel.findByIdAndUpdate(tagID, tagData)
+
+	throw {
+		code: 403,
+	}
+}
+
 export async function removeTag(userID, tagID) {
-	const user = await UserModel.findById(userID)
-	const userWithTags = await user.populate('tags')
-	let pos = -1
-	for (let i = 0; i < userWithTags.tags.length; i++)
-		if (userWithTags.tags[i]._id == tagID) {
-			pos = i
-			break
-		}
-	if (pos < 0) return false
-	userWithTags.tags.splice(pos, 1)
-	const tag = await TagModel.findById(tagID)
-	const tagsWithTasks = await tag.populate('tasks')
-	tagsWithTasks.tasks.forEach(async (task) => {
-		let pos = -1
-		for (let i = 0; i < task.tags.length; i++)
-			if (task.tags[i]._id == tagID) {
-				pos = i
-				break
-			}
-		if (pos < 0) return false
-		task.tags.splice(pos, 1)
-		await TaskModel.findByIdAndUpdate(task._id, { tags: task.tags })
-	})
-	await UserModel.findByIdAndUpdate(userID, { tags: userWithTags.tags })
-	await TagModel.findByIdAndRemove(tagID)
-	return true
+	const allTagOfUser = await getAllTagsOfUser(userID)
+
+	if (allTagOfUser.find((tag) => tag._id == tagID)) {
+		const tag = await TagModel.findByIdAndDelete(tagID)
+		console.log({ tag })
+
+		await UserModel.findOneAndUpdate(
+			{ _id: userID },
+			{
+				$pull: {
+					tags: tagID,
+				},
+			},
+		)
+
+		return
+	}
+
+	throw {
+		code: 403,
+	}
 }
