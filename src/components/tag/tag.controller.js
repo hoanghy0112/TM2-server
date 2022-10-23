@@ -57,7 +57,7 @@ export async function httpUpdateTag(req, res) {
 	const tagData = req.body.tagData
 	console.log(tagID, tagData)
 	try {
-		await TagModel.findByIdAndUpdate(tagID, tagData)
+		await TagModel.findBtyIdAndUpdate(tagID, tagData)
 		return res.status(200).send('Update successfully')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
