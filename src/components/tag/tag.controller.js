@@ -35,14 +35,20 @@ export async function httpGetTagByTitle(req, res) {
 
 export async function httpGetAllTags(req, res) {
 	const userID = req.user._id
-
-	return res.status(200).json(await getAllTagsOfUser(userID))
+	if(!userID) 
+		return res.status(400).send('Bad request')
+	try {
+		return res.status(200).json(await getAllTagsOfUser(userID))
+	} catch (error) {
+		return res.status(500).send('Server error: ' + error.message)
+	}
 }
 
 export async function httpUpdateTag(req, res) {
 	const tagID = req.body.tagID
 	const tagData = req.body.tagData
-	console.log(tagID, tagData)
+	if (!tagData || !tagID)
+		return res.status(400).send('Bad request')
 	try {
 		await TagModel.findBtyIdAndUpdate(tagID, tagData)
 		return res.status(200).send('Update successfully')

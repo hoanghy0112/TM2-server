@@ -32,14 +32,12 @@ const removeTaskFromTag = async (tagID, taskID) => {
 	if (pos < 0)
 		return
 	tag.tasks.splice(pos, 1)
-	console.log(tag.tasks)
 	await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
 }
 
 const addTaskToTag = async (tagID, taskID) => {
 	const tag = await TagModel.findById(tagID)
 	tag.tasks.push(taskID)
-	console.log(tag.tasks)
 	await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
 }
 
