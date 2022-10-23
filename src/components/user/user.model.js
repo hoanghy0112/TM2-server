@@ -28,17 +28,6 @@ export async function addNewTaskToUser(user, task) {
 	)
 }
 
-export async function addNewTagToUser(user, tag) {
-	return await UserModel.findOneAndUpdate(
-		{
-			_id: user._id,
-		},
-		{
-			$push: { tags: tag },
-		},
-	)
-}
-
 export async function createUserInfo(userInfo) {
 	return await UserModel.create(userInfo)
 }

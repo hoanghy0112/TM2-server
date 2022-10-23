@@ -6,7 +6,32 @@ export async function createNewTag(tag) {
 	return await TagModel.create(tag)
 }
 
-export async function addNewTaskToTag(tag, task) {
+export async function addNewTagToUser(userID, tag) {
+	const allTagOfUser = await getAllTagsOfUser(userID)
+
+	console.log({ allTagOfUser })
+
+	const foundTag = allTagOfUser.find((eachTag) => eachTag.title === tag.title)
+
+	console.log({ foundTag })
+
+	if (!foundTag)
+		throw {
+			code: 11000,
+			message: 'Tag has already existed',
+		}
+
+	return await UserModel.findOneAndUpdate(
+		{
+			_id: userID,
+		},
+		{
+			$push: { tags: tag },
+		},
+	)
+}
+
+export async function addNewTagToTask(tag, task) {
 	return await TagModel.findOneAndUpdate(
 		{
 			_id: tag._id,
@@ -19,11 +44,17 @@ export async function addNewTaskToTag(tag, task) {
 
 export async function getTagByTitle(userID, title) {
 	const user = await UserModel.findById(userID)
-	const userWithTags = await user.populate('tags')
-	for (let i = 0; i < userWithTags.tags.length; i++)
-		if (userWithTags.tags[i].title === title)
-			return userWithTags.tags[i];
-	return null;
+	const tags = await user.populate('tags')
+
+	console.log({ tags })
+
+	const titleRegex = new RegExp(title, 'i')
+
+	return tags.find((tag) => titleRegex.test(tag.title))
+
+	// for (let i = 0; i < tags.tags.length; i++)
+	// 	if (tags.tags[i].title === title) return tags.tags[i]
+	// return null
 }
 
 export async function getAllTagsOfUser(userID) {
