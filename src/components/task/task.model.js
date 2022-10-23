@@ -15,34 +15,24 @@ export async function getAllTaskOfUser(userID) {
 }
 
 export async function updateTaskByID(userID, taskID, taskData) {
-	// const existTag = []
-	// const newTags = taskData.tags
-	// const task = await TaskModel.findById(taskID)
-	// task.tags.forEach(async (tagID) => {
-	// 	let isExist = false
-	// 	for (let i = 0; i < newTags.length; i++)
-	// 		if (tagID == newTags[i]) {
-	// 			isExist = true
-	// 			break
-	// 		}
-	// 	if (isExist) existTag.push(tagIjD)
-	// 	else await removeTaskFromTag(tagID, taskID)
-	// })
-	// newTags.forEach(async (tagID) => {
-	// 	let isExist = false
-	// 	for (let i = 0; i < existTag.length; i++)
-	// 		if (tagID == existTag[i]) {
-	// 			isExist = true
-	// 			break
-	// 		}
-	// 	if (!isExist) await addTaskToTag(tagID, taskID)
-	// })
-	// await TaskModel.findByIdAndUpdate(taskID, taskData)
-
 	const allTaskOfUser = await getAllTaskOfUser(userID)
 
-	if (allTaskOfUser.find((task) => task._id == taskID))
-		return TaskModel.findByIdAndUpdate(taskID, taskData)
+	if (allTaskOfUser.find((task) => task._id == taskID)) {
+		const existTag = []
+		const newTags = taskData.tags
+		const task = await TaskModel.findById(taskID)
+		task.tags.forEach(async (tagID) => {
+			if (newTags.find(newTagID => newTagID == tagID)) 
+				existTag.push(tagID)
+			else 
+				await removeTaskFromTag(tagID, taskID)
+		})
+		newTags.forEach(async (tagID) => {
+			if (!existTag.find(existTagID => existTagID == tagID)) 
+				await addTaskToTag(tagID, taskID)
+		})
+		await TaskModel.findByIdAndUpdate(taskID, taskData)
+	}
 	else {
 		throw {
 			code: 403,
@@ -104,22 +94,18 @@ export async function createNewTask(userID, task) {
 	})
 }
 
-// const removeTaskFromTag = async (tagID, taskID) => {
-// 	const tag = await TagModel.findById(tagID)
-// 	let pos = -1
-// 	for (let i = 0; i < tag.tasks.length; i++)
-// 		if (tag.tasks[i] == taskID) {
-// 			pos = i
-// 			break
-// 		}
+export async function removeTaskFromTag(tagID, taskID) {
+	await TagModel.findByIdAndUpdate(tagID, {
+		$pull: {
+			tasks: taskID,
+		},
+	})
+}
 
-// 	if (pos < 0) return
-// 	tag.tasks.splice(pos, 1)
-// 	await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
-// }
-
-// const addTaskToTag = async (tagID, taskID) => {
-// 	const tag = await TagModel.findById(tagID)
-// 	tag.tasks.push(taskID)
-// 	await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
-// }
+export async function addTaskToTag(tagID, taskID) {
+	await TagModel.findByIdAndUpdate(tagID, {
+		$push: {
+			tasks: taskID
+		}
+	})
+}

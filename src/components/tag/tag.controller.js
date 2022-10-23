@@ -72,8 +72,8 @@ export async function httpUpdateTag(req, res) {
 	const tagData = req.body
 
 	try {
-		const newTag = await updateTagByID(userID, tagID, tagData)
-		return res.status(202).send(newTag)
+		await updateTagByID(userID, tagID, tagData)
+		return res.status(202).send('Update successfully')
 	} catch (error) {
 		if (error.code === 403) return res.status(403).send('Forbidden')
 		return res.status(500).send('Server error: ' + error.message)

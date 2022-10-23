@@ -72,9 +72,22 @@ export async function getAllTagsOfUser(userID) {
 export async function updateTagByID(userID, tagID, tagData) {
 	const allTagOfUser = await getAllTagsOfUser(userID)
 
-	if (allTagOfUser.find((tag) => tag._id == tagID))
-		return TagModel.findByIdAndUpdate(tagID, tagData)
-
+	if (allTagOfUser.find((tag) => tag._id == tagID)) {
+		const existTask = []
+		const newTasks = tagData.tasks
+		const tag = await TagModel.findById(tagID)
+		tag.tasks.forEach(async taskID => {
+			if (newTasks.find(newTaskID => newTaskID == taskID))
+				existTask.push(taskID)
+			else
+				await removeTagFromTask(taskID, tagID)
+		})
+		newTasks.forEach(async taskID => {
+			if (!existTask.find(existTaskID => existTaskID == taskID))
+				await addTagToTask(taskID, tagID)
+		})
+		await TagModel.findByIdAndUpdate(tagID, tagData)
+	}
 	throw {
 		code: 403,
 	}
@@ -105,6 +118,14 @@ export async function removeTag(userID, tagID) {
 	throw {
 		code: 403,
 	}
+}
+
+export async function addTagToTask(taskID, tagID) {
+	await TaskModel.findByIdAndUpdate(taskID, {
+		$push: {
+			tags: tagID,
+		},
+	})
 }
 
 export async function removeTagFromTask(taskID, tagID) {
