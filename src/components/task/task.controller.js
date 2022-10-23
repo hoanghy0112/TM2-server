@@ -39,7 +39,7 @@ export async function httpCreateNewTask(req, res) {
 		await CreateTask(userID, taskData)
 		return res.status(200).send("Create successfully")
 	} catch (error) {
-		return res.status(400).send(error)
+		return res.status(500).send('Server error: ' + error.message)
 	}
 }
 
