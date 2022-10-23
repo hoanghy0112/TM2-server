@@ -76,20 +76,20 @@ export async function updateTagByID(userID, tagID, tagData) {
 		const existTask = []
 		const newTasks = tagData.tasks
 		const tag = await TagModel.findById(tagID)
-		tag.tasks.forEach(async taskID => {
-			if (newTasks.find(newTaskID => newTaskID == taskID))
+		tag.tasks.forEach(async (taskID) => {
+			if (newTasks.find((newTaskID) => newTaskID == taskID))
 				existTask.push(taskID)
-			else
-				await removeTagFromTask(taskID, tagID)
+			else await removeTagFromTask(taskID, tagID)
 		})
-		newTasks.forEach(async taskID => {
-			if (!existTask.find(existTaskID => existTaskID == taskID))
+		newTasks.forEach(async (taskID) => {
+			if (!existTask.find((existTaskID) => existTaskID == taskID))
 				await addTagToTask(taskID, tagID)
 		})
 		await TagModel.findByIdAndUpdate(tagID, tagData)
-	}
-	throw {
-		code: 403,
+	} else {
+		throw {
+			code: 403,
+		}
 	}
 }
 
