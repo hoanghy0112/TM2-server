@@ -14,6 +14,7 @@ export async function httpFindUserByName(req, res) {
 	const name = req.query.name
 
 	const users = await findUserByName(name)
+	console.log('find user by name and email')
 
 	return res.status(200).json(users)
 }

@@ -48,7 +48,6 @@ export async function httpGetAllTaskOfUser(req, res) {
 export async function httpUpdateTaskByID(req, res) {
 	const taskID = req.params.taskID
 	const newTask = req.body
-	console.log(newTask)
 
 	return res.status(200).json(await updateTaskByID(taskID, newTask))
 }
