@@ -6,7 +6,7 @@ const TagSchema = new mongoose.Schema({
 	tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
 	color: {
 		type: String,
-		default: '#00a6c',
+		default: '#00a6ca',
 	},
 })
 

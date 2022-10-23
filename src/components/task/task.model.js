@@ -2,12 +2,6 @@ import TaskModel from './task.mongo'
 import UserModel from '../user/user.mongo'
 import TagModel from '../tag/tag.mongo'
 
-export async function createNewTask(task) {
-	const taskData = await TaskModel.create(task)
-
-	return await taskData.populate('participants tags belongTo')
-}
-
 export async function getTaskByID(taskID) {
 	const taskDocument = await TaskModel.findOne({ _id: taskID })
 	if (taskDocument) return taskDocument.populate('participants tags belongTo')
@@ -20,105 +14,112 @@ export async function getAllTaskOfUser(userID) {
 	return populatedUser.tasks
 }
 
-const removeTaskFromTag = async (tagID, taskID) => {
-	const tag = await TagModel.findById(tagID)
-	let pos = -1
-	for (let i = 0; i < tag.tasks.length; i++)
-		if (tag.tasks[i] == taskID) {
-			pos = i
-			break
+export async function updateTaskByID(userID, taskID, taskData) {
+	// const existTag = []
+	// const newTags = taskData.tags
+	// const task = await TaskModel.findById(taskID)
+	// task.tags.forEach(async (tagID) => {
+	// 	let isExist = false
+	// 	for (let i = 0; i < newTags.length; i++)
+	// 		if (tagID == newTags[i]) {
+	// 			isExist = true
+	// 			break
+	// 		}
+	// 	if (isExist) existTag.push(tagIjD)
+	// 	else await removeTaskFromTag(tagID, taskID)
+	// })
+	// newTags.forEach(async (tagID) => {
+	// 	let isExist = false
+	// 	for (let i = 0; i < existTag.length; i++)
+	// 		if (tagID == existTag[i]) {
+	// 			isExist = true
+	// 			break
+	// 		}
+	// 	if (!isExist) await addTaskToTag(tagID, taskID)
+	// })
+	// await TaskModel.findByIdAndUpdate(taskID, taskData)
+
+	const allTaskOfUser = await getAllTaskOfUser(userID)
+
+	if (allTaskOfUser.find((task) => task._id == taskID))
+		return TaskModel.findByIdAndUpdate(taskID, taskData)
+	else {
+		throw {
+			code: 403,
 		}
-
-	if (pos < 0)
-		return
-	tag.tasks.splice(pos, 1)
-	await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
-}
-
-const addTaskToTag = async (tagID, taskID) => {
-	const tag = await TagModel.findById(tagID)
-	tag.tasks.push(taskID)
-	await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
-}
-
-export async function updateTaskByID(taskID, taskData) {
-	const existTag = []
-	const newTags = taskData.tags
-	const task = await TaskModel.findById(taskID)
-	task.tags.forEach(async tagID => {
-		let isExist = false
-		for (let i = 0; i < newTags.length; i++)
-			if (tagID == newTags[i]) {
-				isExist = true
-				break
-			}
-		if (isExist)
-			existTag.push(tagID)
-		else
-			await removeTaskFromTag(tagID, taskID)
-
-	})
-	newTags.forEach(async tagID => {
-		let isExist = false
-		for (let i = 0; i < existTag.length; i++)
-			if (tagID == existTag[i]) {
-				isExist = true
-				break
-			}
-		if(!isExist)
-			await addTaskToTag(tagID, taskID)
-	})
-	await TaskModel.findByIdAndUpdate(taskID, taskData)
+	}
 }
 
 export async function deleteTaskByID(userID, taskID) {
-	const user = await UserModel.findById(userID)
+	const allTasksOfUser = await getAllTaskOfUser(userID)
 
-	const task = await TaskModel.findById(taskID)
+	if (allTasksOfUser.find((task) => task._id == taskID)) {
+		const task = await (
+			await TaskModel.findByIdAndDelete(taskID)
+		).populate('tags')
 
-	const taskWithTags = await task.populate('tags')
+		// remove task from user
+		await UserModel.findByIdAndUpdate(userID, {
+			$pull: {
+				tasks: task._id,
+			},
+		})
 
-	taskWithTags.tags.forEach(async tag => {
-		let pos = -1
-		for (let i = 0; i < tag.tasks.length; i++)
-			if (tag.tasks[i]._id == taskID) {
-				pos = i;
-				break;
-			}
-		if (pos < 0)
-			return false;
-		tag.tasks.splice(pos, 1)
-		await TagModel.findByIdAndUpdate(tag._id, { tasks: tag.tasks })
-	});
+		// remove task from tags
+		task.tags.forEach(async (tagID) => {
+			await TagModel.findByIdAndUpdate(tagID, {
+				$pull: {
+					tasks: task._id,
+				},
+			})
+		})
 
-	let pos = -1
-
-	for (let i = 0; i < user.tasks.length; i++)
-		if (user.tasks[i] == taskID) {
-			pos = i;
-			break;
+		return true
+	} else {
+		throw {
+			code: 403,
 		}
-
-	if (pos < 0)
-		return false;
-
-	user.tasks.splice(pos, 1)
-
-	await UserModel.findByIdAndUpdate(userID, { tasks: user.tasks })
-
-	await TaskModel.findByIdAndRemove(taskID)
-
-	return true
+	}
 }
 
-export async function CreateTask(userID, task) {
-	const newTask = await TaskModel.create(task)
-	const user = await UserModel.findById(userID)
-	user.tasks.push(newTask._id)
-	newTask.tags.forEach(async tagID => {
-		const tag = await TagModel.findById(tagID)
-		tag.tasks.push(newTask._id)
-		await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
+export async function createNewTask(userID, task) {
+	const newTask = await (
+		await TaskModel.create(task)
+	).populate('participants tags belongTo')
+
+	// add new task to user
+	await UserModel.findByIdAndUpdate(userID, {
+		$push: {
+			tasks: newTask._id,
+		},
 	})
-	await UserModel.findByIdAndUpdate(userID, { tasks: user.tasks })
+
+	// add task to tags
+	newTask.tags.forEach(async (tagID) => {
+		await TagModel.findByIdAndUpdate(tagID, {
+			$push: {
+				tasks: newTask._id,
+			},
+		})
+	})
 }
+
+// const removeTaskFromTag = async (tagID, taskID) => {
+// 	const tag = await TagModel.findById(tagID)
+// 	let pos = -1
+// 	for (let i = 0; i < tag.tasks.length; i++)
+// 		if (tag.tasks[i] == taskID) {
+// 			pos = i
+// 			break
+// 		}
+
+// 	if (pos < 0) return
+// 	tag.tasks.splice(pos, 1)
+// 	await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
+// }
+
+// const addTaskToTag = async (tagID, taskID) => {
+// 	const tag = await TagModel.findById(tagID)
+// 	tag.tasks.push(taskID)
+// 	await TagModel.findByIdAndUpdate(tagID, { tasks: tag.tasks })
+// }

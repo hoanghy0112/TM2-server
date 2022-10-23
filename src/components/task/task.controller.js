@@ -1,7 +1,6 @@
 // import { addNewTaskToTag } from '../tag/tag.model'
 // import { addNewTaskToUser } from '../user/user.model'
 import {
-	CreateTask,
 	createNewTask,
 	deleteTaskByID,
 	getAllTaskOfUser,
@@ -35,7 +34,7 @@ export async function httpCreateNewTask(req, res) {
 	const userID = req.user._id
 	if (!userID || !taskData) return res.status(400).send('Bad request')
 	try {
-		await CreateTask(userID, taskData)
+		await createNewTask(userID, taskData)
 		return res.status(200).send('Create successfully')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
@@ -65,13 +64,16 @@ export async function httpGetAllTaskOfUser(req, res) {
 }
 
 export async function httpUpdateTaskByID(req, res) {
+	const userID = req.user._id
 	const taskID = req.params.taskID
 	const taskData = req.body
+
 	if (!taskID || !taskData) return res.status(400).send('Bad request')
 	try {
-		await updateTaskByID(taskID, taskData)
+		await updateTaskByID(userID, taskID, taskData)
 		return res.status(200).send('Update successfully')
 	} catch (error) {
+		if (error.code == 403) return res.status(403).send('Forbidden')
 		return res.status(500).send('Server error: ' + error.message)
 	}
 }
@@ -85,6 +87,7 @@ export async function httpDeleteTaskByID(req, res) {
 			return res.status(200).send('Remove  successfully')
 		else return res.status(400).send('Bad request')
 	} catch (error) {
+		if (error.code == 403) return res.status(403).send('Forbidden')
 		return res.status(500).send('Server error: ' + error.message)
 	}
 }

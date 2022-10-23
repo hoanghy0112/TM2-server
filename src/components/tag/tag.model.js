@@ -45,7 +45,7 @@ export async function getTagByTitle(userID, title) {
 	const titleRegex = new RegExp(removeVietnameseTones(title), 'i')
 
 	return (
-		tags.find((tag) => titleRegex.test(removeVietnameseTones(tag.title))) ||
+		tags.filter((tag) => titleRegex.test(removeVietnameseTones(tag.title))) ||
 		[]
 	)
 }
@@ -102,9 +102,3 @@ export async function removeTagFromTask(taskID, tagID) {
 		},
 	})
 }
-
-// const addTagToTask = async (taskID, tagID) => {
-// 	const task = await TaskModel.findById(taskID)
-// 	task.tags.push(tagID)
-// 	await TaskModel.findByIdAndUpdate(taskID, { tags: task.tags })
-// }
