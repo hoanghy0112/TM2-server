@@ -50,6 +50,18 @@ export async function getTagByTitle(userID, title) {
 	)
 }
 
+export async function getTagByID(userID, tagID) {
+	const allTagOfUser = await getAllTagsOfUser(userID)
+
+	if (allTagOfUser.find((tag) => tag._id == tagID))
+		return TagModel.findById(tagID)
+	else {
+		throw {
+			code: 403,
+		}
+	}
+}
+
 export async function getAllTagsOfUser(userID) {
 	const user = await UserModel.findById(userID)
 	const userWithTags = await user.populate('tags')

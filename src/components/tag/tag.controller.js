@@ -5,6 +5,7 @@ import {
 	removeTag,
 	addNewTagToUser,
 	updateTagByID,
+	getTagByID,
 } from './tag.model'
 
 export async function httpCreateNewTag(req, res) {
@@ -37,6 +38,18 @@ export async function httpGetTagByTitle(req, res) {
 	try {
 		return res.status(200).json(await getTagByTitle(userID, title))
 	} catch (error) {
+		return res.status(500).send('Server error: ' + error.message)
+	}
+}
+
+export async function httpGetTagByID(req, res) {
+	const userID = req.user._id
+	const tagID = req.params.tagID
+
+	try {
+		return res.status(200).json(await getTagByID(userID, tagID))
+	} catch (error) {
+		if (error.code === 403) return res.status(403).send('Forbidden')
 		return res.status(500).send('Server error: ' + error.message)
 	}
 }
