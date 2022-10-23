@@ -15,6 +15,6 @@ taskRouter.post('/', authorizeRouteMiddleware, httpCreateNewTask)
 taskRouter.get('/', authorizeRouteMiddleware, httpGetAllTaskOfUser)
 taskRouter.put('/:taskID', authorizeRouteMiddleware, httpUpdateTaskByID)
 taskRouter.get('/:taskID', authorizeRouteMiddleware, httpGetTaskByID)
-taskRouter.delete('/', authorizeRouteMiddleware, httpDeleteTaskByID)
+taskRouter.delete('/:taskID', authorizeRouteMiddleware, httpDeleteTaskByID)
 
 export default taskRouter

@@ -33,16 +33,14 @@ import {
 export async function httpCreateNewTask(req, res) {
 	const taskData = req.body
 	const userID = req.user._id
-	if (!userID || !taskData)
-		return res.status(400).send('Bad request')
+	if (!userID || !taskData) return res.status(400).send('Bad request')
 	try {
 		await CreateTask(userID, taskData)
-		return res.status(200).send("Create successfully")
+		return res.status(200).send('Create successfully')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
 	}
 }
-
 
 export async function httpGetTaskByID(req, res) {
 	const taskID = req.params.taskID
@@ -57,8 +55,7 @@ export async function httpGetTaskByID(req, res) {
 
 export async function httpGetAllTaskOfUser(req, res) {
 	const userID = req.user._id
-	if(!userID) 
-		return res.status(400).send('Bad request')
+	if (!userID) return res.status(400).send('Bad request')
 	try {
 		const tasks = await getAllTaskOfUser(userID)
 		return res.status(200).json(tasks)
@@ -70,8 +67,7 @@ export async function httpGetAllTaskOfUser(req, res) {
 export async function httpUpdateTaskByID(req, res) {
 	const taskID = req.params.taskID
 	const taskData = req.body
-	if (!taskID || !taskData)
-		return res.status(400).send('Bad request')
+	if (!taskID || !taskData) return res.status(400).send('Bad request')
 	try {
 		await updateTaskByID(taskID, taskData)
 		return res.status(200).send('Update successfully')
@@ -81,15 +77,13 @@ export async function httpUpdateTaskByID(req, res) {
 }
 
 export async function httpDeleteTaskByID(req, res) {
-	const taskID = req.body.taskID
+	const taskID = req.params.taskID
 	const userID = req.user._id
-	if (!userID || !taskID)
-		return res.status(400).send('Bad request')
+
 	try {
 		if (await deleteTaskByID(userID, taskID))
 			return res.status(200).send('Remove  successfully')
-		else
-			return res.status(400).send('Bad request')
+		else return res.status(400).send('Bad request')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
 	}
