@@ -77,11 +77,7 @@ export async function removeTag(userID, tagID) {
 
 		// Delete tag in all tasks that have this tag
 		tagWithTasks.tasks.forEach(async (task) => {
-			await TaskModel.findByIdAndUpdate(task._id, {
-				$pull: {
-					tags: tagID,
-				},
-			})
+			await removeTagFromTask(task._id, tagID)
 		})
 
 		// Delete this tag in user
@@ -91,8 +87,6 @@ export async function removeTag(userID, tagID) {
 			},
 		})
 
-		// await TagModel.findByIdAndDelete(tagID)
-
 		return
 	}
 
@@ -101,22 +95,16 @@ export async function removeTag(userID, tagID) {
 	}
 }
 
-const removeTagFromTask = async (taskID, tagID) => {
-	const task = await TaskModel.findById(taskID)
-	let pos = -1
-	for (let i = 0; i < task.tags.length; i++)
-		if (task.tags[i] == tagID) {
-			pos = i
-			break
-		}
-	if (pos < 0) return false
-	task.tags.splice(pos, 1)
-	await TaskModel.findByIdAndUpdate(taskID, { tags: task.tags })
-	return true
+export async function removeTagFromTask(taskID, tagID) {
+	await TaskModel.findByIdAndUpdate(taskID, {
+		$pull: {
+			tags: tagID,
+		},
+	})
 }
 
-const addTagToTask = async (taskID, tagID) => {
-	const task = await TaskModel.findById(taskID)
-	task.tags.push(tagID)
-	await TaskModel.findByIdAndUpdate(taskID, { tags: task.tags })
-}
+// const addTagToTask = async (taskID, tagID) => {
+// 	const task = await TaskModel.findById(taskID)
+// 	task.tags.push(tagID)
+// 	await TaskModel.findByIdAndUpdate(taskID, { tags: task.tags })
+// }
