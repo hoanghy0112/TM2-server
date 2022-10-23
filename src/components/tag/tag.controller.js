@@ -6,7 +6,6 @@ import {
 	addNewTagToUser,
 	updateTagByID,
 } from './tag.model'
-import TagModel from './tag.mongo'
 
 export async function httpCreateNewTag(req, res) {
 	const tagData = req.body
