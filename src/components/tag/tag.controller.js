@@ -4,6 +4,7 @@ import {
 	getAllTagsOfUser,
 	removeTag,
 	addNewTagToUser,
+	updateTagByID
 } from './tag.model'
 import TagModel from './tag.mongo'
 
@@ -58,7 +59,7 @@ export async function httpUpdateTag(req, res) {
 	if (!tagData || !tagID)
 		return res.status(400).send('Bad request')
 	try {
-		await TagModel.findBtyIdAndUpdate(tagID, tagData)
+		await updateTagByID(tagID, tagData)
 		return res.status(200).send('Update successfully')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)

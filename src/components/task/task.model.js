@@ -43,12 +43,12 @@ const addTaskToTag = async (tagID, taskID) => {
 
 export async function updateTaskByID(taskID, taskData) {
 	const existTag = []
-	const newTag = taskData.tags
+	const newTags = taskData.tags
 	const task = await TaskModel.findById(taskID)
 	task.tags.forEach(async tagID => {
 		let isExist = false
-		for (let i = 0; i < newTag.length; i++)
-			if (tagID == newTag[i]) {
+		for (let i = 0; i < newTags.length; i++)
+			if (tagID == newTags[i]) {
 				isExist = true
 				break
 			}
@@ -58,7 +58,7 @@ export async function updateTaskByID(taskID, taskData) {
 			await removeTaskFromTag(tagID, taskID)
 
 	})
-	newTag.forEach(async tagID => {
+	newTags.forEach(async tagID => {
 		let isExist = false
 		for (let i = 0; i < existTag.length; i++)
 			if (tagID == existTag[i]) {

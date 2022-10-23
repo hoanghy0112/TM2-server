@@ -85,6 +85,37 @@ const addTagToTask = async (taskID, tagID) => {
 	await TaskModel.findByIdAndUpdate(taskID, {tags: task.tags})
 }
 
+export async function updateTagByID(tagID, tagData) {
+	const existTask = []
+	const newTasks = tagData.tasks
+	const tag = await TagModel.findById(tagID)
+	console.log(tag.tasks)
+	console.log(newTasks)
+	tag.tasks.forEach(async taskID => {
+		let isExist = false
+		for( let i=0; i< newTasks.length; i++ )
+			if(taskID == newTasks[i]) {
+				isExist = true
+				break
+			}
+		if(isExist)
+			existTask.push(taskID)
+		else
+			await removeTagFromTask(taskID, tagID)
+	})
+	newTasks.forEach(async taskID => {
+		let isExist = false
+		for(let i=0; i<existTask.length; i++)
+			if(taskID == existTask[i]) {
+				isExist = true
+				break
+			}
+		if(!isExist)
+			await addTagToTask(taskID, tagID)
+	})
+	await TagModel.findByIdAndUpdate(tagID, tagData)
+}
+
 export async function removeTag(userID, tagID) {
 	const user = await UserModel.findById(userID)
 	let pos = -1
