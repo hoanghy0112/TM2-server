@@ -5,6 +5,7 @@ import groupRouter from '../components/group/group.router'
 import tagRouter from '../components/tag/tag.router'
 import taskRouter from '../components/task/task.router'
 import userRouter from '../components/user/user.router'
+import groupTaskRouter from '../components/groupTask/groupTask.router'
 
 const api = express.Router()
 
@@ -13,5 +14,6 @@ api.use('/user', userRouter)
 api.use('/task', taskRouter)
 api.use('/tag', tagRouter)
 api.use('/group', groupRouter)
+api.use('/groupTasks', groupTaskRouter)
 
 export default api

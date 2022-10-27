@@ -9,6 +9,12 @@ const GroupSchema = new mongoose.Schema({
 			ref: 'User',
 		},
 	],
+	admin: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+		required: true
+	},
+	groupTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'groupTask' }],
 })
 
 const GroupModel = mongoose.model('Group', GroupSchema)
