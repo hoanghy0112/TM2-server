@@ -44,7 +44,7 @@ export async function httpAddUserToGroup(req, res) {
 	if (!userID || !groupID || !memberID)
 		return res.status(400).send('Bad Request')
 	const group = await GroupModel.findById(groupID)
-	if (userID != group.admin) return res.status(401).send('Unauthorized')
+	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
 	try {
 		await addUserToGroup(memberID, groupID)
 		return res.status(202).send('Your request has been sent')
@@ -60,7 +60,7 @@ export async function httpRemoveUserFromGroup(req, res) {
 	if (!userID || !groupID || !memberID)
 		return res.status(400).send('Bad Request')
 	const group = await GroupModel.findById(groupID)
-	if (userID != group.admin) return res.status(401).send('Unauthorized')
+	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
 	try {
 		await removeUserFromGroup(memberID, groupID)
 		return res.status(202).send('Your request has been sent')
@@ -87,7 +87,7 @@ export async function httpDeleteGroupByID(req, res) {
 	const groupID = req.params.groupID
 	if (!userID || !groupID) return res.status(400).send('Bad Request')
 	const group = await GroupModel.findById(groupID)
-	if (userID != group.admin) return res.status(401).send('Unauthorized')
+	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
 	try {
 		await deleteGroupByID(groupID)
 		return res.status(200).send('Delete Successfully')
