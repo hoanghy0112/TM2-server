@@ -6,7 +6,7 @@ import {
 	httpGetTaskByID,
 	httpUpdateTaskByID,
 	httpJoinTask,
-	httpQuitTask
+	httpQuitTask,
 } from './groupTask.controller'
 
 import { authorizeRouteMiddleware } from '../../middleware/authentication'
