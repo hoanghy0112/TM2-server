@@ -5,14 +5,14 @@ import {
 	getGroupByID,
 	getAllGroupsOfUser,
 	updateGroupByID,
-	deleteGroupByID
+	deleteGroupByID,
 } from './group.model'
 import GroupModel from './group.mongo'
 
 export async function httpCreateNewGroup(req, res) {
 	const userID = req.user._id
 	const groupData = req.body
-	if(!userID || groupData)  return res.status(400).send('Bad request')
+	if (!userID || !groupData) return res.status(400).send('Bad request')
 	try {
 		const newGroup = await createNewGroup(userID, groupData)
 		return res.status(200).json(newGroup)
@@ -41,10 +41,10 @@ export async function httpAddUserToGroup(req, res) {
 	const userID = req.user._id
 	const groupID = req.params.groupID
 	const memberID = req.params.memberID
-	if (!userID || !groupID || !memberID) return res.status(400).send('Bad Request')
+	if (!userID || !groupID || !memberID)
+		return res.status(400).send('Bad Request')
 	const group = await GroupModel.findById(groupID)
-	if (userID != group.admin)
-		return res.status(401).send('Unauthorized')
+	if (userID != group.admin) return res.status(401).send('Unauthorized')
 	try {
 		await addUserToGroup(memberID, groupID)
 		return res.status(202).send('Your request has been sent')
@@ -57,10 +57,10 @@ export async function httpRemoveUserFromGroup(req, res) {
 	const userID = req.user._id
 	const groupID = req.params.groupID
 	const memberID = req.params.memberID
-	if (!userID || !groupID || !memberID) return res.status(400).send('Bad Request')
+	if (!userID || !groupID || !memberID)
+		return res.status(400).send('Bad Request')
 	const group = await GroupModel.findById(groupID)
-	if (userID != group.admin)
-		return res.status(401).send('Unauthorized')
+	if (userID != group.admin) return res.status(401).send('Unauthorized')
 	try {
 		await removeUserFromGroup(memberID, groupID)
 		return res.status(202).send('Your request has been sent')
@@ -85,10 +85,9 @@ export async function httpUpdateGroup(req, res) {
 export async function httpDeleteGroupByID(req, res) {
 	const userID = req.user._id
 	const groupID = req.params.groupID
-	if(!userID || !groupID) return res.status(400).send('Bad Request')
+	if (!userID || !groupID) return res.status(400).send('Bad Request')
 	const group = await GroupModel.findById(groupID)
-	if (userID != group.admin)
-		return res.status(401).send('Unauthorized')
+	if (userID != group.admin) return res.status(401).send('Unauthorized')
 	try {
 		await deleteGroupByID(groupID)
 		return res.status(200).send('Delete Successfully')
