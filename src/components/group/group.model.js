@@ -2,6 +2,8 @@ import GroupModel from './group.mongo'
 import UserModel from '../user/user.mongo'
 import GroupTaskModel from '../groupTask/groupTask.mongo'
 
+import { createNotificationForJoinAndOutGroup } from '../notification/notification.model'
+
 export async function createNewGroup(userID, groupData) {
 	const group = await GroupModel.create(groupData)
 	// add gr to admin
@@ -68,6 +70,7 @@ export async function addUserToGroup(userID, groupID) {
 			groups: groupID
 		}
 	})
+	await createNotificationForJoinAndOutGroup(userID, groupID, true)
 }
 
 export async function removeUserFromGroup(userID, groupID) {
@@ -81,6 +84,7 @@ export async function removeUserFromGroup(userID, groupID) {
 			groups: groupID
 		}
 	})
+	await createNotificationForJoinAndOutGroup(userID, groupID, false)
 }
 
 export async function updateGroupByID(groupID, groupData) {

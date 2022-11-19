@@ -34,9 +34,10 @@ export async function httpGetAllGrTaskOfUser (req, res) {
 export async function httpUpdateTaskByID (req, res) {
 	const taskID = req.params.taskID
 	const taskData = req.body
+    const userID = req.user._id
     if (!taskID || !taskData) return res.status(400).send('Bad request')
     try {
-		await updateGrTaskByID(taskID, taskData)
+		await updateGrTaskByID(userID, taskID, taskData)
 		return res.status(200).send('Update successfully')
 	} catch (error) {
 		if (error.code == 403) return res.status(403).send('Forbidden')

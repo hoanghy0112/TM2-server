@@ -10,6 +10,7 @@ const TaskSchema = new mongoose.Schema({
 	},
 	tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
 	descriptions: [String],
+	days: [Date]
 })
 
 const TaskModel = mongoose.model('Task', TaskSchema)

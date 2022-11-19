@@ -107,3 +107,23 @@ export async function addTaskToTag(tagID, taskID) {
 		},
 	})
 }
+
+// const changeDay = (date, newDate) => {
+// 	const a = date.getDay()
+// 	a.setHours(a.getHours()+7)
+// 	const b = newDate.getDay()
+// 	console.log(date, newDate)
+// 	console.log(a, b)
+// 	if (b != 0) {
+// 		if (a != 0)
+// 			date.setDate(date.getDate() + b - a)
+// 		else
+// 			date.setDate(date.getDate() - b + 1)
+// 	}
+// 	else
+// 		date.setDate(date.getDate() + 7 - (a != 0 ? a : 7))
+// }
+
+export async function changeTaskDay(taskID, taskData) {
+	await TaskModel.findByIdAndUpdate(taskID, taskData)
+}
