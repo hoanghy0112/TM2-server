@@ -15,11 +15,16 @@ export async function httpUpdateUserInfo(req, res) {
 		familyName,
 		photo,
 	}
+
+	Object.keys(newData).forEach((key) =>
+		obj[key] === '' ? delete obj[key] : {},
+	)
+
 	try {
 		const userInfo = await updateUserInfo(newData)
-		return res.status(200).json({ ...userInfo, ...newData })
+		return res.status(200).send()
 	} catch (error) {
-		return res.status(500).send(error.message)
+		return res.status(400).send(error.message)
 	}
 }
 
@@ -31,7 +36,6 @@ export async function httpFindUserByName(req, res) {
 	const name = req.query.name
 
 	const users = await findUserByName(name)
-	console.log('find user by name and email')
 
 	return res.status(200).json(users)
 }

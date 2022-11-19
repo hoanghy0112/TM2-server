@@ -15,9 +15,9 @@ export async function updateUserInfo(userInfo) {
 		},
 		userInfo,
 		{
-			upsert: true,
+			upsert: false,
 		},
-	).select('_id userID givenName familyName email photo')
+	)
 }
 
 export async function addNewTaskToUser(user, task) {
@@ -44,5 +44,5 @@ export async function findUserByName(name) {
 			{ givenName: new RegExp(nameRegex, 'i') },
 			{ familyName: new RegExp(nameRegex, 'i') },
 		],
-	})
+	}).select('_id givenName familyName email photo')
 }
