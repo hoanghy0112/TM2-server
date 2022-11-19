@@ -1,20 +1,23 @@
-import mongoose from 'mongoose'
 import UserModel from './user.mongo'
 
 export async function getUserInfo(userID) {
-	return await UserModel.findOne({ userID: userID })
+	console.log({ userID })
+	const userInfo = await UserModel.findOne({ userID }).select(
+		'_id userID givenName familyName email photo',
+	)
+	return userInfo
 }
 
 export async function updateUserInfo(userInfo) {
 	return await UserModel.findOneAndUpdate(
 		{
-			userID: userInfo.userID,
+			_id: userInfo._id,
 		},
 		userInfo,
 		{
 			upsert: true,
 		},
-	)
+	).select('_id userID givenName familyName email photo')
 }
 
 export async function addNewTaskToUser(user, task) {
