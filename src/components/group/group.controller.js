@@ -6,6 +6,7 @@ import {
 	getAllGroupsOfUser,
 	updateGroupByID,
 	deleteGroupByID,
+	getAllTaskOfGroup,
 } from './group.model'
 import GroupModel from './group.mongo'
 
@@ -29,6 +30,22 @@ export async function httpGetGroupByID(req, res) {
 	const group = await getGroupByID(id)
 
 	return res.status(200).json(group)
+}
+
+export async function httpGetAllTaskOfGroup(req, res) {
+	const userID = req.user._id
+	const groupID = req.params.groupID
+	const from = req.query.from
+	const to = req.query.to
+
+	if (!userID || !groupID || !from || !to)
+		return res.status(400).send('Bad request')
+	try {
+		const tasks = await getAllTaskOfGroup(groupID, userID, from, to)
+		return res.status(200).json(tasks)
+	} catch (error) {
+		return res.status(500).send('Server error: ' + error.message)
+	}
 }
 
 export async function htppGetAllGroup(req, res) {

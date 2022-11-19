@@ -1,6 +1,6 @@
-import GroupTaskModel from './groupTask.mongo'
-import UserModel from '../user/user.mongo'
 import GroupModel from '../group/group.mongo'
+import UserModel from '../user/user.mongo'
+import GroupTaskModel from './groupTask.mongo'
 
 import {
     createNotificationForCreateAndUpdateTask,
@@ -24,9 +24,9 @@ export async function createNewTask(userID, taskData) {
 }
 
 export async function getAllGrTasksOfUser(userID) {
-    const user = await UserModel.findById(userID)
-    const userWithGroupTasks = await user.populate('groupTasks')
-    return userWithGroupTasks.groupTasks
+	const user = await UserModel.findById(userID)
+	const userWithGroupTasks = await user.populate('groupTasks')
+	return userWithGroupTasks.groupTasks
 }
 
 export async function updateGrTaskByID(userID, taskID, taskData) {
@@ -36,19 +36,22 @@ export async function updateGrTaskByID(userID, taskID, taskData) {
 }
 
 export async function deleteGrTaskByID(taskID) {
-    const task = await GroupTaskModel.findById(taskID)
-    task.participants.forEach(async userID => await UserModel.findByIdAndUpdate(userID, {
-        $pull: {
-            groupTasks: taskID
-        }
-    }))
-    const groupID = task.belongTo
-    await GroupModel.findByIdAndUpdate(groupID, {
-        $pull: {
-            groupTasks: taskID
-        }
-    })
-    await GroupTaskModel.findByIdAndDelete(taskID)
+	const task = await GroupTaskModel.findById(taskID)
+	task.participants.forEach(
+		async (userID) =>
+			await UserModel.findByIdAndUpdate(userID, {
+				$pull: {
+					groupTasks: taskID,
+				},
+			}),
+	)
+	const groupID = task.belongTo
+	await GroupModel.findByIdAndUpdate(groupID, {
+		$pull: {
+			groupTasks: taskID,
+		},
+	})
+	await GroupTaskModel.findByIdAndDelete(taskID)
 }
 
 export async function addGrTaskToUser(userID, taskID) {
