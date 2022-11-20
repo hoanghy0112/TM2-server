@@ -72,7 +72,7 @@ export async function getAllNotificationsOfUser(userID) {
 }
 
 export async function setReadNotifications(notificationID) {
-    notificationID.forEach(id => NotificationModel.findByIdAndUpdate(id, {
+    notificationID.forEach(async id => await NotificationModel.findByIdAndUpdate(id, {
         isRead: true
     }))
 }
