@@ -10,7 +10,7 @@ export async function createNotificationForCreateAndUpdateTask(userID, groupID, 
     group.users.forEach(async id => {
         if (id != userID) {
             const notification = await NotificationModel.create({
-                content: user.engName + " " + notiContent,
+                content: user.givenName + " " + notiContent,
                 belongTo: id,
                 time: new Date(),
                 isRead: false,
@@ -31,7 +31,7 @@ export async function createNotificationForJoinAndQuitTask(userID, taskID, flag)
     task.participants.forEach(async id => {
         if (id != userID) {
             const notification = await NotificationModel.create({
-                content: user.engName + (flag ? " vừa tham gia task: " : " vừa rời khỏi task: ") + task.title,
+                content: user.givenName + (flag ? " vừa tham gia task: " : " vừa rời khỏi task: ") + task.title,
                 belongTo: id,
                 time: new Date(),
                 isRead: false,
@@ -52,7 +52,7 @@ export async function createNotificationForJoinAndOutGroup(userID, groupID, flag
     group.users.forEach(async id => {
         if (id != group.admin) {
             const notification = await NotificationModel.create({
-                content: user.engName + " " + (flag ? " được thêm vào group " : " bị xóa khỏi group ") + group.name,
+                content: user.givenName + " " + (flag ? " được thêm vào group " : " bị xóa khỏi group ") + group.name,
                 belongTo: id,
                 time: new Date(),
                 isRead: false,
