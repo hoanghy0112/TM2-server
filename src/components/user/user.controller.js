@@ -17,7 +17,7 @@ export async function httpUpdateUserInfo(req, res) {
 	}
 
 	Object.keys(newData).forEach((key) =>
-		obj[key] === '' ? delete obj[key] : {},
+		newData[key] === '' ? delete newData[key] : {},
 	)
 
 	try {
