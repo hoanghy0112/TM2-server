@@ -3,9 +3,7 @@ import UserModel from '../user/user.mongo'
 import TagModel from '../tag/tag.mongo'
 
 export async function getTaskByID(taskID) {
-	const taskDocument = await TaskModel.findOne({ _id: taskID })
-	if (taskDocument) return taskDocument.populate('participants tags belongTo')
-	return {}
+	return await TaskModel.findById(taskID)
 }
 
 export async function getAllTaskOfUser(userID) {

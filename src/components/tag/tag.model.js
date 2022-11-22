@@ -76,15 +76,17 @@ export async function updateTagByID(userID, tagID, tagData) {
 		const existTask = []
 		const newTasks = tagData.tasks
 		const tag = await TagModel.findById(tagID)
-		tag.tasks.forEach(async (taskID) => {
-			if (newTasks.find((newTaskID) => newTaskID == taskID))
-				existTask.push(taskID)
-			else await removeTagFromTask(taskID, tagID)
-		})
-		newTasks.forEach(async (taskID) => {
-			if (!existTask.find((existTaskID) => existTaskID == taskID))
-				await addTagToTask(taskID, tagID)
-		})
+		if (tag.tasks.length > 0) {
+			tag.tasks.forEach(async (taskID) => {
+				if (newTasks.find((newTaskID) => newTaskID == taskID))
+					existTask.push(taskID)
+				else await removeTagFromTask(taskID, tagID)
+			})
+			newTasks.forEach(async (taskID) => {
+				if (!existTask.find((existTaskID) => existTaskID == taskID))
+					await addTagToTask(taskID, tagID)
+			})
+		}
 		await TagModel.findByIdAndUpdate(tagID, tagData)
 	} else {
 		throw {
@@ -100,10 +102,11 @@ export async function removeTag(userID, tagID) {
 		const tag = await TagModel.findByIdAndDelete(tagID)
 		const tagWithTasks = await tag.populate('tasks')
 
-		// Delete tag in all tasks that have this tag
-		tagWithTasks.tasks.forEach(async (task) => {
-			await removeTagFromTask(task._id, tagID)
-		})
+		if (tagWithTasks.tasks.length > 0)
+			// Delete tag in all tasks that have this tag
+			tagWithTasks.tasks.forEach(async (task) => {
+				await removeTagFromTask(task._id, tagID)
+			})
 
 		// Delete this tag in user
 		await UserModel.findByIdAndUpdate(userID, {

@@ -15,7 +15,7 @@ const taskRouter = express.Router()
 taskRouter.post('/', authorizeRouteMiddleware, httpCreateNewTask)
 taskRouter.get('/', authorizeRouteMiddleware, httpGetAllTaskOfUser)
 taskRouter.put('/:taskID', authorizeRouteMiddleware, httpUpdateTaskByID)
-taskRouter.get('/:taskID/:userID', authorizeRouteMiddleware, httpGetTaskByID)
+taskRouter.get('/:taskID', authorizeRouteMiddleware, httpGetTaskByID)
 taskRouter.delete('/:taskID', authorizeRouteMiddleware, httpDeleteTaskByID)
 
 taskRouter.put('/day/:taskID', authorizeRouteMiddleware, httpChangeDay)

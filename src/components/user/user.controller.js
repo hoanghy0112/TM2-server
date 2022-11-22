@@ -22,7 +22,7 @@ export async function httpUpdateUserInfo(req, res) {
 
 	try {
 		const userInfo = await updateUserInfo(newData)
-		return res.status(200).send()
+		return res.status(200).send(userInfo)
 	} catch (error) {
 		return res.status(400).send(error.message)
 	}

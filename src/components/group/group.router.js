@@ -23,7 +23,7 @@ groupRouter.get(
 )
 // api rieng cho admin them xoa thanh vien trong group
 groupRouter.put(
-	'/:groupID/:memberID/add',
+	'/:groupID/add',
 	authorizeRouteMiddleware,
 	httpAddUserToGroup,
 )
