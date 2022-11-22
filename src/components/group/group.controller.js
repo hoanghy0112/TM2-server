@@ -57,14 +57,14 @@ export async function htppGetAllGroup(req, res) {
 export async function httpAddUserToGroup(req, res) {
 	const userID = req.user._id
 	const groupID = req.params.groupID
-	const memberID = req.params.memberID
-	if (!userID || !groupID || !memberID)
+	const members = req.body.members
+	if (!userID || !groupID || !members)
 		return res.status(400).send('Bad Request')
 	const group = await GroupModel.findById(groupID)
 	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
 	try {
-		await addUserToGroup(memberID, groupID)
-		return res.status(202).send('Your request has been sent')
+		members.forEach(async memberID => await addUserToGroup(memberID, groupID));
+		return res.status(202).send('Added')
 	} catch (error) {
 		return res.status(500).send(error.message)
 	}
@@ -80,7 +80,7 @@ export async function httpRemoveUserFromGroup(req, res) {
 	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
 	try {
 		await removeUserFromGroup(memberID, groupID)
-		return res.status(202).send('Your request has been sent')
+		return res.status(202).send('Removed user')
 	} catch (error) {
 		return res.status(500).send(error.message)
 	}

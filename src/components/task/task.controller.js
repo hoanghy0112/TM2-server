@@ -45,7 +45,6 @@ export async function httpCreateNewTask(req, res) {
 
 export async function httpGetTaskByID(req, res) {
 	const taskID = req.params.taskID
-	const userID = req.params.userID
 	if (!taskID) return res.status(400).send('Bad request')
 	try {
 		const task = await getTaskByID(taskID)

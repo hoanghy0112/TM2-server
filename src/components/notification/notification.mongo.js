@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const NotificationSchema = new mongoose.Schema({
     content: {type: String, required: true},
+    thumbnail: {type: String, required: true},
     belongTo: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',

@@ -62,34 +62,8 @@ export async function getAllTaskOfGroup(groupID, userID, from, to) {
 export async function getAllGroupsOfUser(userID) {
 	const userDocument = await UserModel.findById(userID)
 	const userWithGroups = await userDocument.populate('groups')
-
 	return userWithGroups.groups
 }
-
-// export async function addUserToGroup(userID, groupID) {
-
-// 	const userUpdate = await UserModel.updateOne(
-// 		{
-// 			_id: userID,
-// 		},
-// 		{
-// 			$push: { groups: groupID },
-// 		},
-// 	)
-
-// 	const groupUpdate = await GroupModel.updateOne(
-// 		{
-// 			_id: groupID,
-// 		},
-// 		{
-// 			$push: { users: userID },
-// 		},
-// 	)
-
-// 	console.log(userUpdate, groupUpdate)
-
-// 	if (userUpdate.acknowledged == false) throw new Error("Can't find group")
-// }
 
 export async function addUserToGroup(userID, groupID) {
 	await GroupModel.findByIdAndUpdate(groupID, {
@@ -127,15 +101,15 @@ export async function deleteGroupByID(groupID) {
 	const group = await GroupModel.findById(groupID)
 	group.users.forEach(
 		async (userID) =>
-			await UserModel.findOneAndUpdate(userID, {
+			await UserModel.findByIdAndUpdate(userID, {
 				$pull: {
-					groups: group._id,
+					groups: groupID,
 				},
 			}),
 	)
-	await UserModel.findOneAndUpdate(group.admin, {
+	await UserModel.findByIdAndUpdate(group.admin, {
 		$pull: {
-			groups: group._id,
+			groups: groupID,
 		},
 	})
 	group.groupTasks.forEach(async (taskID) => {
