@@ -15,6 +15,10 @@ const UserModel = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		displayName: {
+			type: String,
+			required: true,
+		},
 		engName: {
 			type: String,
 			required: true,
@@ -61,8 +65,8 @@ const UserModel = new mongoose.Schema(
 			{
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'Notification',
-			}
-		]
+			},
+		],
 	},
 	{
 		virtuals: {

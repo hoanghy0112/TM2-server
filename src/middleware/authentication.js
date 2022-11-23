@@ -21,6 +21,7 @@ export function authorizeRouteMiddleware(req, res, next) {
 						.split(' ')
 						.slice(1)
 						.join(' '),
+					displayName: userProfile.displayName,
 					engName: removeVietnameseTones(userProfile.displayName),
 					photo: userProfile.photoURL,
 					email: userProfile.email,
