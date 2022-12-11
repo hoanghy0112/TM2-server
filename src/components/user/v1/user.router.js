@@ -6,7 +6,7 @@ import {
 	httpUpdateUserInfo,
 } from './user.controller'
 
-import { authorizeRouteMiddleware } from '../../middleware/authentication'
+import { authorizeRouteMiddleware } from '../../../middleware/authentication'
 
 const userRouter = express.Router()
 

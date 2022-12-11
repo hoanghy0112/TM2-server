@@ -3,7 +3,7 @@ import express from 'express'
 import groupRouter from '../components/group/v1/group.router'
 import tagRouter from '../components/tag/tag.router'
 import taskRouter from '../components/task/task.router'
-import userRouter from '../components/user/user.router'
+import userRouter from '../components/user/v1/user.router'
 import groupTaskRouter from '../components/groupTask/groupTask.router'
 import notificationsRouter from '../components/notification/v1/notification.router'
 
