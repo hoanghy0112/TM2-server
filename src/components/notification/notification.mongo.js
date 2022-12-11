@@ -1,17 +1,28 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
 
 const NotificationSchema = new mongoose.Schema({
-    content: {type: String, required: true},
-    thumbnail: {type: String, required: true},
-    belongTo: {
+	content: { type: String, required: true },
+	thumbnail: { type: String, required: true },
+	belongTo: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		required: true
+		required: true,
 	},
-    time: {type: Date, required: true},
-    isRead: {type: Boolean, default: false},
-    url: {type: String}
+	userIDs: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
+		},
+	],
+	groupID: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Group',
+		required: false,
+	},
+	time: { type: Date, required: true },
+	isRead: { type: Boolean, default: false },
+	url: { type: String },
 })
 
 const NotificationModel = mongoose.model('Notification', NotificationSchema)
-export  default NotificationModel
+export default NotificationModel
