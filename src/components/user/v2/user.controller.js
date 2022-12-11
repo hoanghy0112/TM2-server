@@ -1,4 +1,4 @@
-import { findUserByName, getUserInfo, updateUserInfo } from './user.model'
+import { findUserByName, getUserInfo, updateUserInfo } from '../user.model'
 
 export async function httpGetUserInfo(req, res) {
 	const userID = req.user.userID

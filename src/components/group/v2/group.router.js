@@ -1,7 +1,9 @@
 import { getAllGrTasksOfUser } from '../../groupTask/groupTask.model'
 
-export default function setupGroupSocketListener(socket, user) {
-	const groupIDs = getAllGrTasksOfUser(user._id).map((group) => group._id)
+export default async function setupGroupSocketListener(socket, user) {
+	const groupIDs = (await getAllGrTasksOfUser(user._id)).map(
+		(group) => group._id,
+	)
 	groupIDs.forEach((groupID) => {
 		socket.join(`group:${groupID}`)
 	})
