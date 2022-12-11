@@ -1,9 +1,9 @@
 import {
     getAllNotificationsOfUser,
     setReadNotifications
-} from './notification.model'
+} from '../notification.model'
 
-import NotificationModel from './notification.mongo'
+import NotificationModel from '../notification.mongo'
 
 export async function httpGetNotificationsOfUser(req, res) {
     const userID = req.user._id

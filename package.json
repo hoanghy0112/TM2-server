@@ -4,8 +4,8 @@
   "description": "",
   "main": "bin/server.js",
   "scripts": {
-    "watch": "nodemon --es-module-specifier-resolution=node bin/server.js",
-    "start": "node --es-module-specifier-resolution=node bin/server.js",
+    "watch": "nodemon --es-module-specifier-resolution=node bin/index.js",
+    "start": "node --es-module-specifier-resolution=node bin/index.js",
     "deploy": "docker build . -t hoanghy/tm2-server && docker push hoanghy/tm2-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -26,7 +26,8 @@
     "mongoose": "^6.1.8",
     "morgan": "^1.10.0",
     "passport": "^0.5.2",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "socket.io": "^4.5.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

@@ -1,21 +1,19 @@
 import express from 'express'
 
-import authRouter from '../components/auth/auth.router'
 import groupRouter from '../components/group/group.router'
 import tagRouter from '../components/tag/tag.router'
 import taskRouter from '../components/task/task.router'
 import userRouter from '../components/user/user.router'
 import groupTaskRouter from '../components/groupTask/groupTask.router'
-import notificationsRouter from '../components/notification/notification.router'
+import notificationsRouter from '../components/notification/v1/notification.router'
 
-const api = express.Router()
+const v1API = express.Router()
 
-// api.use('/auth', authRouter)
-api.use('/user', userRouter)
-api.use('/task', taskRouter)
-api.use('/tag', tagRouter)
-api.use('/group', groupRouter)
-api.use('/groupTasks', groupTaskRouter)
-api.use('/notifications', notificationsRouter)
+v1API.use('/user', userRouter)
+v1API.use('/task', taskRouter)
+v1API.use('/tag', tagRouter)
+v1API.use('/group', groupRouter)
+v1API.use('/groupTasks', groupTaskRouter)
+v1API.use('/notifications', notificationsRouter)
 
-export default api
+export default v1API
