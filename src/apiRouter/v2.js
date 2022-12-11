@@ -1,4 +1,5 @@
 import express from 'express'
+import setupGroupSocketListener from '../components/group/v2/group.router'
 import {
 	socketGetNotificationsOfUser,
 	socketSetReadNotification,
@@ -21,6 +22,8 @@ export function socketHandlerV2(io) {
 
 		const { user } = socket
 
+      // socket.join(`user:${user._id}`)
 		setupNotificationSocketListener(socket, user)
+		setupGroupSocketListener(socket, user)
 	})
 }

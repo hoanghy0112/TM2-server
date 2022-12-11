@@ -1,3 +1,4 @@
+import io from '../../../../bin/socketServer'
 import {
 	addUserToGroup,
 	removeUserFromGroup,
@@ -7,7 +8,7 @@ import {
 	updateGroupByID,
 	deleteGroupByID,
 	getAllTaskOfGroup,
-} from './group.model'
+} from '../group.model'
 import GroupModel from './group.mongo'
 
 export async function httpCreateNewGroup(req, res) {
@@ -16,6 +17,7 @@ export async function httpCreateNewGroup(req, res) {
 	if (!userID || !groupData) return res.status(400).send('Bad request')
 	try {
 		const newGroup = await createNewGroup(userID, groupData)
+		io.to(`user:${userID}`).emit('create-group', newGroup._id)
 		return res.status(200).json(newGroup)
 	} catch (error) {
 		return res.status(500).send(error)
@@ -63,7 +65,9 @@ export async function httpAddUserToGroup(req, res) {
 	const group = await GroupModel.findById(groupID)
 	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
 	try {
-		members.forEach(async memberID => await addUserToGroup(memberID, groupID));
+		members.forEach(
+			async (memberID) => await addUserToGroup(memberID, groupID),
+		)
 		return res.status(202).send('Added')
 	} catch (error) {
 		return res.status(500).send(error.message)

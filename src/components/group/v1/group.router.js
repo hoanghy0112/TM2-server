@@ -9,7 +9,7 @@ import {
 	httpGetAllTaskOfGroup,
 } from './group.controller'
 
-import { authorizeRouteMiddleware } from '../../middleware/authentication'
+import { authorizeRouteMiddleware } from '../../../middleware/authentication'
 
 const groupRouter = express.Router()
 
@@ -22,11 +22,7 @@ groupRouter.get(
 	httpGetAllTaskOfGroup,
 )
 // api rieng cho admin them xoa thanh vien trong group
-groupRouter.put(
-	'/:groupID/add',
-	authorizeRouteMiddleware,
-	httpAddUserToGroup,
-)
+groupRouter.put('/:groupID/add', authorizeRouteMiddleware, httpAddUserToGroup)
 groupRouter.put(
 	'/:groupID/:memberID/remove',
 	authorizeRouteMiddleware,

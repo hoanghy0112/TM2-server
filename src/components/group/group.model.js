@@ -5,23 +5,15 @@ import GroupTaskModel from '../groupTask/groupTask.mongo'
 
 import { createNotificationForJoinAndOutGroup } from '../notification/notification.model'
 
-export async function createNewGroup(userID, groupData) {
-	const group = await GroupModel.create(groupData)
-	// add gr to admin
+export async function createNewGroup(userID, { name, description }) {
+	const group = await GroupModel.create({ name, description, admin: userID })
+
 	await UserModel.findByIdAndUpdate(userID, {
 		$push: {
 			groups: group._id,
 		},
 	})
-	// add gr to member
-	group.users.forEach(
-		async (userID) =>
-			await UserModel.findByIdAndUpdate(userID, {
-				$push: {
-					groups: group._id,
-				},
-			}),
-	)
+
 	return group
 }
 
