@@ -33,42 +33,5 @@ const app = express()
 app.use(cors({ credentials: true, origin: true }))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
-// app.use(helmet())
 
 app.use(morgan('combined'))
-
-// app.use(
-// 	session({
-// 		name: SESSION_NAME,
-// 		secret: SESSION_SECRET,
-// 		resave: false,
-// 		saveUninitialized: false,
-// 		store: MongoStore.create({
-// 			mongoUrl: MONGO_URL,
-// 			collectionName: SESSION_NAME,
-// 		}),
-// 	}),
-// )
-
-// app.use(passport.initialize())
-// app.use(passport.session())
-
-// passport.serializeUser((user, done) => {
-// 	done(null, user)
-// })
-
-// passport.deserializeUser((obj, done) => {
-// 	done(null, obj)
-// })
-
-// passport.use(new Strategy(GOOGLE_OAUTH_OPTIONS, googleVerifyCallback))
-
-app.use(cookieParser())
-
-// app.use('/', authorizeRouteMiddleware)
-
-app.use('/auth', authRouter)
-
-app.use('/api', api)
-
-export default app
