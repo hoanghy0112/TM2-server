@@ -18,12 +18,15 @@ export async function createNewGroup(userID, { name, description }) {
 }
 
 export async function getGroupByID(groupID) {
-	const groupDocument = await GroupModel.findOne({ _id: groupID })
-	if (groupDocument) return await groupDocument.populate('users')
+	const groupDocument = await GroupModel.findOne({ _id: groupID }).select(
+		'_id name description users admin',
+	)
+	// if (groupDocument) return await groupDocument.populate('users')
+	return groupDocument
 	return {}
 }
 
-export async function getAllTaskOfGroup(groupID, userID, from, to) {
+export async function getAllBusyTimeOfGroup(groupID, userID, from, to) {
 	const group = await (
 		await GroupModel.findById(groupID)
 	).populate('users admin')
@@ -54,7 +57,13 @@ export async function getAllTaskOfGroup(groupID, userID, from, to) {
 export async function getAllGroupsOfUser(userID) {
 	const userDocument = await UserModel.findById(userID)
 	const userWithGroups = await userDocument.populate('groups')
-	return userWithGroups.groups
+	return userWithGroups.groups.map((group) => ({
+		_id: group._id,
+		name: group.name,
+		description: group.description,
+		users: group.users,
+		admin: group.admin,
+	}))
 }
 
 export async function addUserToGroup(userID, groupID) {
@@ -63,6 +72,7 @@ export async function addUserToGroup(userID, groupID) {
 			users: userID,
 		},
 	})
+
 	await UserModel.findByIdAndUpdate(userID, {
 		$push: {
 			groups: groupID,
@@ -86,7 +96,7 @@ export async function removeUserFromGroup(userID, groupID) {
 }
 
 export async function updateGroupByID(groupID, groupData) {
-	await GroupModel.findByIdAndUpdate(groupID, groupData)
+	await GroupModel.findByIdAndUpdate(groupID, groupData, { new: true })
 }
 
 export async function deleteGroupByID(groupID) {

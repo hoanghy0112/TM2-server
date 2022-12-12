@@ -7,32 +7,36 @@ import {
 	getAllGroupsOfUser,
 	updateGroupByID,
 	deleteGroupByID,
-	getAllTaskOfGroup,
+	getAllBusyTimeOfGroup,
 } from '../group.model'
 import GroupModel from '../group.mongo'
 
 export async function httpCreateNewGroup(req, res) {
 	const userID = req.user._id
 	const groupData = req.body
+
 	if (!userID || !groupData) return res.status(400).send('Bad request')
+
 	try {
 		const newGroup = await createNewGroup(userID, groupData)
-		io.to(`user:${userID}`).emit('create-group', newGroup._id)
+		const groups = await getAllGroupsOfUser(userID)
+		io.to(`groups:${userID}`).emit('groups', groups)
 		return res.status(200).json(newGroup)
 	} catch (error) {
 		return res.status(500).send(error)
 	}
 }
 
-export async function socketGetGroupByID(groupID) {
+export async function socketGetGroupByID(socket, groupID) {
 	if (!groupID) return
 
 	const group = await getGroupByID(groupID)
 
-	io.to(`group:${groupID}`).emit('group-info', group)
+	socket.join(`group:${groupID}`)
+	updateGroupInfoToSocket(group)
 }
 
-export async function httpGetAllTaskOfGroup(req, res) {
+export async function httpGetAllBusyTimeOfGroup(req, res) {
 	const userID = req.user._id
 	const groupID = req.params.groupID
 	const from = req.query.from
@@ -40,28 +44,41 @@ export async function httpGetAllTaskOfGroup(req, res) {
 
 	if (!userID || !groupID || !from || !to)
 		return res.status(400).send('Bad request')
+
 	try {
-		const tasks = await getAllTaskOfGroup(groupID, userID, from, to)
-		return res.status(200).json(tasks)
+		const busyTimes = await getAllBusyTimeOfGroup(groupID, userID, from, to)
+		return res.status(200).json(busyTimes)
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
 	}
 }
 
-// thay đổi mem thì chỉ có admin ms dc
 export async function httpAddUserToGroup(req, res) {
 	const userID = req.user._id
 	const groupID = req.params.groupID
 	const members = req.body.members
+
 	if (!userID || !groupID || !members)
 		return res.status(400).send('Bad Request')
-	const group = await GroupModel.findById(groupID)
-	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
+
+	const group = await getGroupByID(groupID)
+
+	if (!group) return res.status(400).send('Bad Request')
+
+	if (!userID.equals(group.admin))
+		return res.status(400).send('You are not admin')
+
 	try {
-		members.forEach(
-			async (memberID) => await addUserToGroup(memberID, groupID),
+		await Promise.all(
+			members.map(
+				async (memberID) => await addUserToGroup(memberID, groupID),
+			),
 		)
-		return res.status(202).send('Added')
+
+		const newGroup = await getGroupByID(groupID)
+		updateGroupInfoToSocket(newGroup)
+
+		return res.status(200).send('Added')
 	} catch (error) {
 		return res.status(500).send(error.message)
 	}
@@ -71,25 +88,46 @@ export async function httpRemoveUserFromGroup(req, res) {
 	const userID = req.user._id
 	const groupID = req.params.groupID
 	const memberID = req.params.memberID
+
 	if (!userID || !groupID || !memberID)
 		return res.status(400).send('Bad Request')
-	const group = await GroupModel.findById(groupID)
-	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
+
+	const group = await getGroupByID(groupID)
+
+	if (!group) return res.status(400).send('Bad Request')
+
+	if (!userID.equals(group.admin))
+		return res.status(400).send('You are not admin')
+
 	try {
 		await removeUserFromGroup(memberID, groupID)
-		return res.status(202).send('Removed user')
+
+		const newGroup = await getGroupByID(groupID)
+		updateGroupInfoToSocket(newGroup)
+
+		return res.status(200).send('Removed user')
 	} catch (error) {
 		return res.status(500).send(error.message)
 	}
 }
 
-// update chung như name, desc mọi member đều dc, ko dc update memebers
 export async function httpUpdateGroup(req, res) {
 	const groupID = req.params.groupID
 	const groupData = req.body
+
 	if (!userID || !groupID) return res.status(400).send('Bad Request')
+
+	const group = await getGroupByID(groupID)
+
+	if (!group) return res.status(400).send('Bad Request')
+
+	if (!userID.equals(group.admin))
+		return res.status(400).send('You are not admin')
+
 	try {
-		await updateGroupByID(groupID, groupData)
+		const newGroup = await updateGroupByID(groupID, groupData)
+		updateGroupInfoToSocket(newGroup)
+
 		return res.status(200).send('Update Successfully')
 	} catch (error) {
 		return res.status(500).send(error.message)
@@ -99,13 +137,33 @@ export async function httpUpdateGroup(req, res) {
 export async function httpDeleteGroupByID(req, res) {
 	const userID = req.user._id
 	const groupID = req.params.groupID
+
 	if (!userID || !groupID) return res.status(400).send('Bad Request')
-	const group = await GroupModel.findById(groupID)
-	if (!userID.equals(group.admin)) return res.status(401).send('Unauthorized')
+
+	const group = await getGroupByID(groupID)
+
+	if (!group) return res.status(400).send('Bad Request')
+
+	if (!userID.equals(group.admin))
+		return res.status(400).send('You are not admin')
+
 	try {
 		await deleteGroupByID(groupID)
+
+		const groups = await getAllGroupsOfUser(userID)
+		io.to(`groups:${userID}`).emit('groups', groups)
+
 		return res.status(200).send('Delete Successfully')
 	} catch (error) {
 		return res.status(500).send(error.message)
 	}
+}
+
+export function updateGroupInfoToSocket(group) {
+	const { _id: groupID } = group
+	io.to(`group:${groupID}`).emit('group-info', group)
+}
+
+export function updateGroupBusyTimeToSocket(newBusyTime) {
+	io.to(`group-busy:${groupID}`).emit('group-busy', newBusyTime)
 }

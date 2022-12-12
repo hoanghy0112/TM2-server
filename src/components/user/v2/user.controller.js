@@ -44,7 +44,7 @@ export async function httpFindUserByName(req, res) {
 
 export async function socketGetAllGroup(socket, user) {
 	const userID = user._id
-	const groups = getAllGroupsOfUser(userID)
+	const groups = await getAllGroupsOfUser(userID)
 
 	socket.join(`groups:${userID}`)
 	io.to(`groups:${userID}`).emit('groups', groups)

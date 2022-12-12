@@ -6,7 +6,7 @@ import {
 	getAllGroupsOfUser,
 	updateGroupByID,
 	deleteGroupByID,
-	getAllTaskOfGroup,
+	getAllBusyTimeOfGroup,
 } from '../group.model'
 import GroupModel from '../group.mongo'
 
@@ -41,7 +41,7 @@ export async function httpGetAllTaskOfGroup(req, res) {
 	if (!userID || !groupID || !from || !to)
 		return res.status(400).send('Bad request')
 	try {
-		const tasks = await getAllTaskOfGroup(groupID, userID, from, to)
+		const tasks = await getAllBusyTimeOfGroup(groupID, userID, from, to)
 		return res.status(200).json(tasks)
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
