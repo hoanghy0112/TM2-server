@@ -1,7 +1,6 @@
 import UserModel from './user.mongo'
 
 export async function getUserInfo(userID) {
-	console.log({ userID })
 	const userInfo = await UserModel.findOne({ userID }).select(
 		'_id userID givenName familyName email photo',
 	)
@@ -16,6 +15,7 @@ export async function updateUserInfo(userInfo) {
 		userInfo,
 		{
 			upsert: false,
+			new: true,
 		},
 	)
 }

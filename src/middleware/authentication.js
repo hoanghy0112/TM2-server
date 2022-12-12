@@ -15,7 +15,7 @@ export function authorizeRouteMiddleware(req, res, next) {
 			let user = await getUserInfo(uid)
 
 			if (!user) {
-				const userProfile = await getAuth().getUser(uid)
+				const userProfile = await getAuth(firebaseApp).getUser(uid)
 
 				const profile = {
 					userID: userProfile.uid,

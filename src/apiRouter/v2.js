@@ -7,12 +7,15 @@ import {
 	socketSetReadNotification,
 } from '../components/notification/v2/notification.controller'
 import setupNotificationSocketListener from '../components/notification/v2/notification.router'
-import setupUserSocketListener from '../components/user/v2/user.router'
+import userRouter, {
+	setupUserSocketListener,
+} from '../components/user/v2/user.router'
 
 import { authorizeSocketMiddleware } from '../middleware/socketAuthentication'
 
 const v2API = express.Router()
 v2API.use('/group', groupRouter)
+v2API.use('/user', userRouter)
 
 export default v2API
 

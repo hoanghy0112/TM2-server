@@ -2,11 +2,13 @@ import io from '../../../../bin/socketServer'
 import { getAllGroupsOfUser } from '../../group/group.model'
 import { findUserByName, getUserInfo, updateUserInfo } from '../user.model'
 
-export async function socketGetUserInfo(socket, userID) {
+export async function socketGetUserInfo(socket, user) {
+	const userID = user.userID
 	const userInfo = await getUserInfo(userID)
+	console.log({ userInfo, userID })
 
 	socket.join(`user-info:${user._id}`)
-	io.to(`user-info:${userID}`).emit('data', userInfo)
+	io.to(`user-info:${user._id}`).emit('user-info', userInfo)
 }
 
 export async function httpUpdateUserInfo(req, res) {
@@ -25,7 +27,7 @@ export async function httpUpdateUserInfo(req, res) {
 
 	try {
 		const userInfo = await updateUserInfo(newData)
-		io.to(`user:${userID}`).emit('user-info', userInfo)
+		io.to(`user-info:${userID}`).emit('user-info', userInfo)
 		return res.status(200).send(userInfo)
 	} catch (error) {
 		return res.status(400).send(error.message)
@@ -43,7 +45,7 @@ export async function httpFindUserByName(req, res) {
 export async function socketGetAllGroup(socket, user) {
 	const userID = user._id
 	const groups = getAllGroupsOfUser(userID)
-	
-	socket.join(`groups`)
-	io.to(`groups:${userID}`).emit('data', groups)
+
+	socket.join(`groups:${userID}`)
+	io.to(`groups:${userID}`).emit('groups', groups)
 }
