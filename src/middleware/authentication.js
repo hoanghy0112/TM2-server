@@ -6,14 +6,17 @@ import { removeVietnameseTones } from '../utils/converter'
 
 export function authorizeRouteMiddleware(req, res, next) {
 	const [type, accessToken] = req.headers['authorization'].split(' ')
+	console.log({ accessToken })
+
 	getAuth(firebaseApp)
 		.verifyIdToken(accessToken)
 		.then(async (decodedToken) => {
 			const uid = decodedToken.uid
 			let user = await getUserInfo(uid)
 
-			const userProfile = await getAuth().getUser(uid)
 			if (!user) {
+				const userProfile = await getAuth().getUser(uid)
+
 				const profile = {
 					userID: userProfile.uid,
 					givenName: userProfile.displayName.split(' ')[0],

@@ -1,5 +1,7 @@
 import express from 'express'
-import setupGroupSocketListener from '../components/group/v2/group.router'
+import groupRouter, {
+	setupGroupSocketListener,
+} from '../components/group/v2/group.router'
 import {
 	socketGetNotificationsOfUser,
 	socketSetReadNotification,
@@ -10,6 +12,7 @@ import setupUserSocketListener from '../components/user/v2/user.router'
 import { authorizeSocketMiddleware } from '../middleware/socketAuthentication'
 
 const v2API = express.Router()
+v2API.use('/group', groupRouter)
 
 export default v2API
 

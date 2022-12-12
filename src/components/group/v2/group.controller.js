@@ -9,7 +9,7 @@ import {
 	deleteGroupByID,
 	getAllTaskOfGroup,
 } from '../group.model'
-import GroupModel from './group.mongo'
+import GroupModel from '../group.mongo'
 
 export async function httpCreateNewGroup(req, res) {
 	const userID = req.user._id
@@ -24,14 +24,12 @@ export async function httpCreateNewGroup(req, res) {
 	}
 }
 
-export async function httpGetGroupByID(req, res) {
-	const id = req.params.id
+export async function socketGetGroupByID(groupID) {
+	if (!groupID) return
 
-	if (!id) return res.status(400).send('Bad request')
+	const group = await getGroupByID(groupID)
 
-	const group = await getGroupByID(id)
-
-	return res.status(200).json(group)
+	io.to(`group:${groupID}`).emit('group-info', group)
 }
 
 export async function httpGetAllTaskOfGroup(req, res) {
@@ -48,11 +46,6 @@ export async function httpGetAllTaskOfGroup(req, res) {
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
 	}
-}
-
-export async function htppGetAllGroup(req, res) {
-	const userID = req.user._id
-	return res.status(200).json(await getAllGroupsOfUser(userID))
 }
 
 // thay đổi mem thì chỉ có admin ms dc
