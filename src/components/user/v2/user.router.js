@@ -2,8 +2,10 @@ import express from 'express'
 import { authorizeRouteMiddleware } from '../../../middleware/authentication'
 
 import {
+	httpAcceptJoinGroup,
 	httpGetUserInvitations,
 	httpGetUserRequests,
+	httpRequestJoinGroup,
 	httpUpdateUserInfo,
 	socketGetAllGroup,
 	socketGetUserInfo,
@@ -11,6 +13,16 @@ import {
 
 const userRouter = express.Router()
 
+userRouter.put(
+	'/request-join/:groupID',
+	authorizeRouteMiddleware,
+	httpRequestJoinGroup,
+)
+userRouter.put(
+	'/accept-join/:groupID',
+	authorizeRouteMiddleware,
+	httpAcceptJoinGroup,
+)
 userRouter.get('/requests', authorizeRouteMiddleware, httpGetUserRequests)
 userRouter.get('/invitations', authorizeRouteMiddleware, httpGetUserInvitations)
 

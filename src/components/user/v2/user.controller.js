@@ -1,10 +1,12 @@
 import io from '../../../../bin/socketServer'
 import { getAllGroupsOfUser } from '../../group/group.model'
 import {
+	acceptJoinGroup,
 	findUserByName,
 	getUserInfo,
 	getUserInvitations,
 	getUserRequests,
+	requestJoinGroup,
 	updateUserInfo,
 } from '../user.model'
 
@@ -31,6 +33,36 @@ export async function httpUpdateUserInfo(req, res) {
 	}
 }
 
+export async function httpRequestJoinGroup(req, res) {
+	const userID = req.user._id
+	const groupID = req.params.groupID
+
+	if (!groupID) return res.status(400).send('Require group id')
+
+	try {
+		await requestJoinGroup(userID, groupID)
+		return res.status(200).send('Your request has been send')
+	} catch (error) {
+		console.log({ error })
+		return res.status(400).send('Bad request')
+	}
+}
+
+export async function httpAcceptJoinGroup(req, res) {
+	const userID = req.user._id
+	const groupID = req.params.groupID
+
+	if (!groupID) return res.status(400).send('Require group id')
+
+	try {
+		await acceptJoinGroup(userID, groupID)
+		return res.status(200).send('You has joined to group')
+	} catch (error) {
+		console.log({ error })
+		return res.status(400).send('Bad request')
+	}
+}
+
 export async function httpFindUserByName(req, res) {
 	const name = req.query.name
 
@@ -49,6 +81,7 @@ export async function httpGetUserRequests(req, res) {
 		const requests = await getUserRequests(userID, pageIndex)
 		return res.status(200).send(requests)
 	} catch (error) {
+		console.log({ error })
 		return res.status(400).send('Bad request')
 	}
 }
@@ -63,6 +96,7 @@ export async function httpGetUserInvitations(req, res) {
 		const requests = await getUserInvitations(userID, pageIndex)
 		return res.status(200).send(requests)
 	} catch (error) {
+		console.log({ error })
 		return res.status(400).send('Bad request')
 	}
 }

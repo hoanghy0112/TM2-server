@@ -3,10 +3,12 @@ import { authorizeRouteMiddleware } from '../../../middleware/authentication'
 
 import { getAllGrTasksOfUser } from '../../groupTask/groupTask.model'
 import {
+	httpAcceptUserToJoinGroup,
 	httpAddUserToGroup,
 	httpCreateNewGroup,
 	httpDeleteGroupByID,
 	httpGetAllBusyTimeOfGroup,
+	httpInviteJoinGroup,
 	httpRemoveUserFromGroup,
 	socketGetGroupByID,
 } from './group.controller'
@@ -15,6 +17,17 @@ const groupRouter = express.Router()
 
 groupRouter.post('/', authorizeRouteMiddleware, httpCreateNewGroup)
 groupRouter.put('/:groupID/add', authorizeRouteMiddleware, httpAddUserToGroup)
+groupRouter.put(
+	'/:groupID/invite',
+	authorizeRouteMiddleware,
+	httpInviteJoinGroup,
+)
+groupRouter.put(
+	'/:groupID/accept',
+	authorizeRouteMiddleware,
+	httpAcceptUserToJoinGroup,
+)
+
 groupRouter.get(
 	'/:groupID/busy',
 	authorizeRouteMiddleware,

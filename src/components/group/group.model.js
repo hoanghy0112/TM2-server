@@ -128,3 +128,69 @@ export async function deleteGroupByID(groupID) {
 	})
 	await GroupModel.findByIdAndDelete(groupID)
 }
+
+export async function inviteJoinGroup(adminID, userID, groupID) {
+	const { invitations, admin } = await GroupModel.findById(
+		groupID,
+		'invitation admin',
+	)
+
+	if (String(admin) !== String(adminID))
+		throw {
+			msg: `${adminID} are not the admin of group ${groupID}`,
+		}
+
+	if (
+		invitations
+			.map((invitation) => String(invitation))
+			.includes(String(userID))
+	)
+		return
+
+	await GroupModel.findByIdAndUpdate(groupID, {
+		$push: {
+			invitations: userID,
+		},
+	})
+
+	await UserModel.findByIdAndUpdate(userID, {
+		$push: {
+			invitations: groupID,
+		},
+	})
+}
+
+export async function acceptUserToJoinGroup(adminID, userID, groupID) {
+	const { requests, admin } = await GroupModel.findById(
+		groupID,
+		'requests admin',
+	)
+
+	if (String(admin) !== String(adminID))
+		throw {
+			msg: `${adminID} are not the admin of group ${groupID}`,
+		}
+
+	if (!requests.map((request) => String(request)).includes(userID))
+		throw {
+			msg: `${userID} didn't request to group ${groupID}`,
+		}
+
+	await GroupModel.findByIdAndUpdate(groupID, {
+		$pull: {
+			requests: userID,
+		},
+		$push: {
+			users: userID,
+		},
+	})
+
+	await UserModel.findByIdAndUpdate(userID, {
+		$pull: {
+			requests: groupID,
+		},
+		$push: {
+			groups: groupID,
+		},
+	})
+}

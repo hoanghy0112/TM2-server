@@ -8,6 +8,8 @@ import {
 	updateGroupByID,
 	deleteGroupByID,
 	getAllBusyTimeOfGroup,
+	inviteJoinGroup,
+	acceptUserToJoinGroup,
 } from '../group.model'
 
 export async function socketGetGroupByID(socket, groupID) {
@@ -49,6 +51,47 @@ export async function httpGetAllBusyTimeOfGroup(req, res) {
 		return res.status(200).json(busyTimes)
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
+	}
+}
+
+export async function httpInviteJoinGroup(req, res) {
+	const adminID = req.user._id
+	const userIDs = req.body.users
+	const groupID = req.params.groupID
+
+	if (!groupID) return res.status(400).send('Require group id')
+
+	try {
+		await Promise.all(
+			userIDs.map(
+				async (userID) => await inviteJoinGroup(adminID, userID, groupID),
+			),
+		)
+		return res.status(200).send('Your request has been send')
+	} catch (error) {
+		console.log({ error })
+		return res.status(400).send('Bad request')
+	}
+}
+
+export async function httpAcceptUserToJoinGroup(req, res) {
+	const adminID = req.user._id
+	const userIDs = req.body.users
+	const groupID = req.params.groupID
+
+	if (!groupID) return res.status(400).send('Require group id')
+
+	try {
+		await Promise.all(
+			userIDs.map(
+				async (userID) =>
+					await acceptUserToJoinGroup(adminID, userID, groupID),
+			),
+		)
+		return res.status(200).send('You has joined to group')
+	} catch (error) {
+		console.log({ error })
+		return res.status(400).send(error?.msg || 'Bad request')
 	}
 }
 
