@@ -3,27 +3,6 @@ import UserModel from '../user/user.mongo'
 import GroupModel from '../group/group.mongo'
 import GroupTaskModel from '../groupTask/groupTask.mongo'
 
-export async function createNewNotification({
-	content,
-	thumbnail,
-	belongTo,
-	userIDs,
-	groupID,
-	time,
-	url,
-}) {
-	NotificationModel.create({
-		content,
-		thumbnail,
-		belongTo,
-		userIDs,
-		groupID,
-		isRead: false,
-		time,
-		url,
-	})
-}
-
 export async function createNotificationForCreateAndUpdateTask(
 	userID,
 	groupID,
@@ -53,22 +32,19 @@ export async function createNotificationForCreateAndUpdateTask(
 export async function createNotificationForJoinAndQuitTask(
 	userID,
 	taskID,
-	flag,
+	isJoin,
 ) {
 	const task = await GroupTaskModel.findById(taskID)
 	const user = await UserModel.findById(userID)
 	task.participants.forEach(async (id) => {
 		if (id != userID) {
-			const notification = await NotificationModel.create({
-				content:
-					user.displayName +
-					(flag ? ' vừa tham gia task: ' : ' vừa rời khỏi task: ') +
-					task.title,
+			const notification = await createNewNotification({
+				content: `${user.displayName} ${
+					isJoin ? 'vừa tham gia task' : 'vừa rời khỏi task'
+				}: ${task.title}`,
 				thumbnail: user.photo,
 				belongTo: id,
 				time: new Date(),
-				isRead: false,
-				url: '',
 			})
 			await UserModel.findByIdAndUpdate(id, {
 				$push: {
@@ -79,26 +55,40 @@ export async function createNotificationForJoinAndQuitTask(
 	})
 }
 
+export async function createNotificationForRequestJoinGroup(userID, groupID) {
+	const group = await GroupModel.findById(groupID)
+	const user = await UserModel.findById(userID)
+
+	const notification = await createNewNotification({
+		content: `Bạn vừa được thêm vào nhóm ${group.name}`,
+		thumbnail: user.photo,
+		belongTo: id,
+		time: new Date(),
+	})
+
+	await UserModel.findByIdAndUpdate(id, {
+		$push: {
+			notifications: notification._id,
+		},
+	})
+}
+
 export async function createNotificationForJoinAndOutGroup(
 	userID,
 	groupID,
-	flag,
+	isJoin,
 ) {
 	const group = await GroupModel.findById(groupID)
 	const user = await UserModel.findById(userID)
 	group.users.forEach(async (id) => {
 		if (id != group.admin) {
-			const notification = await NotificationModel.create({
-				content:
-					user.displayName +
-					' ' +
-					(flag ? ' được thêm vào group ' : ' bị xóa khỏi group ') +
-					group.name,
+			const notification = await createNewNotification({
+				content: `${user.displayName} ${
+					isJoin ? 'vừa tham gia group' : 'vừa rời khỏi group'
+				}: ${task.title}`,
 				thumbnail: user.photo,
 				belongTo: id,
 				time: new Date(),
-				isRead: false,
-				url: '',
 			})
 			await UserModel.findByIdAndUpdate(id, {
 				$push: {
@@ -120,4 +110,25 @@ export async function setReadNotifications(notificationID) {
 				isRead: true,
 			}),
 	)
+}
+
+export async function createNewNotification({
+	content,
+	thumbnail,
+	belongTo,
+	userIDs,
+	groupID,
+	time,
+	url = '',
+}) {
+	return await NotificationModel.create({
+		content,
+		thumbnail,
+		belongTo,
+		userIDs,
+		groupID,
+		isRead: false,
+		time,
+		url,
+	})
 }

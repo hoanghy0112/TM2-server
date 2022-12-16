@@ -7,6 +7,32 @@ export async function getUserInfo(userID) {
 	return userInfo
 }
 
+export async function getUserRequests(userID, pageIndex) {
+	const userWithRequests = await UserModel.findOne(
+		{ _id: userID },
+		'requests',
+		{
+			limit: 10,
+			skip: 10 * pageIndex,
+		},
+	).populate('requests')
+	return userWithRequests.requests
+}
+
+export async function getUserInvitations(userID) {
+	const userWithInvitations = await UserModel.findOne(
+		{
+			_id: userID,
+		},
+		'invitations',
+		{
+			limit: 10,
+			skip: 10 * pageIndex,
+		},
+	).populate('invitations')
+	return userWithInvitations.invitations
+}
+
 export async function updateUserInfo(userInfo) {
 	return await UserModel.findOneAndUpdate(
 		{

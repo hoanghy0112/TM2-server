@@ -9,7 +9,15 @@ import {
 	deleteGroupByID,
 	getAllBusyTimeOfGroup,
 } from '../group.model'
-import GroupModel from '../group.mongo'
+
+export async function socketGetGroupByID(socket, groupID) {
+	if (!groupID) return
+
+	const group = await getGroupByID(groupID)
+
+	socket.join(`group:${groupID}`)
+	updateGroupInfoToSocket(group)
+}
 
 export async function httpCreateNewGroup(req, res) {
 	const userID = req.user._id
@@ -25,15 +33,6 @@ export async function httpCreateNewGroup(req, res) {
 	} catch (error) {
 		return res.status(500).send(error)
 	}
-}
-
-export async function socketGetGroupByID(socket, groupID) {
-	if (!groupID) return
-
-	const group = await getGroupByID(groupID)
-
-	socket.join(`group:${groupID}`)
-	updateGroupInfoToSocket(group)
 }
 
 export async function httpGetAllBusyTimeOfGroup(req, res) {

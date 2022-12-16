@@ -67,6 +67,18 @@ const UserModel = new mongoose.Schema(
 				ref: 'Notification',
 			},
 		],
+		requests: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Group',
+			},
+		],
+		invitations: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Group',
+			},
+		],
 	},
 	{
 		virtuals: {
