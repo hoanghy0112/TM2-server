@@ -1,4 +1,5 @@
 import GroupModel from '../group/group.mongo'
+import { createNotificationForJoinGroup } from '../notification/notification.model'
 import UserModel from './user.mongo'
 
 export async function getUserInfo(userID) {
@@ -130,4 +131,6 @@ export async function acceptJoinGroup(userID, groupID) {
 			groups: groupID,
 		},
 	})
+
+	await createNotificationForJoinGroup(userID, groupID)
 }

@@ -2,6 +2,7 @@ import NotificationModel from './notification.mongo'
 import UserModel from '../user/user.mongo'
 import GroupModel from '../group/group.mongo'
 import GroupTaskModel from '../groupTask/groupTask.mongo'
+import io from '../../../bin/socketServer'
 
 export async function createNotificationForCreateAndUpdateTask(
 	userID,
@@ -55,18 +56,40 @@ export async function createNotificationForJoinAndQuitTask(
 	})
 }
 
-export async function createNotificationForRequestJoinGroup(userID, groupID) {
+export async function createNotificationForInviteToGroup(userID, groupID) {
+	const group = await GroupModel.findById(groupID)
+	const user = await UserModel.findById(userID)
+
+	const notification = await createNewNotification({
+		content: `${group.name} đã mời bạn tham gia nhóm`,
+		thumbnail: user.photo,
+		belongTo: userID,
+		time: new Date(),
+	})
+
+	io.to(`notification:${userID}`).emit('notification', notification)
+
+	await UserModel.findByIdAndUpdate(userID, {
+		$push: {
+			notifications: notification._id,
+		},
+	})
+}
+
+export async function createNotificationForJoinGroup(userID, groupID) {
 	const group = await GroupModel.findById(groupID)
 	const user = await UserModel.findById(userID)
 
 	const notification = await createNewNotification({
 		content: `Bạn vừa được thêm vào nhóm ${group.name}`,
 		thumbnail: user.photo,
-		belongTo: id,
+		belongTo: userID,
 		time: new Date(),
 	})
 
-	await UserModel.findByIdAndUpdate(id, {
+	io.to(`notification:${userID}`).emit('notification', notification)
+
+	await UserModel.findByIdAndUpdate(userID, {
 		$push: {
 			notifications: notification._id,
 		},

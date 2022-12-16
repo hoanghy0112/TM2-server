@@ -3,7 +3,11 @@ import UserModel from '../user/user.mongo'
 import TaskModel from '../task/task.mongo'
 import GroupTaskModel from '../groupTask/groupTask.mongo'
 
-import { createNotificationForJoinAndOutGroup } from '../notification/notification.model'
+import {
+	createNotificationForInviteToGroup,
+	createNotificationForJoinAndOutGroup,
+	createNotificationForJoinGroup,
+} from '../notification/notification.model'
 
 export async function createNewGroup(userID, { name, description }) {
 	const group = await GroupModel.create({ name, description, admin: userID })
@@ -158,6 +162,8 @@ export async function inviteJoinGroup(adminID, userID, groupID) {
 			invitations: groupID,
 		},
 	})
+
+	await createNotificationForInviteToGroup(userID, groupID)
 }
 
 export async function acceptUserToJoinGroup(adminID, userID, groupID) {
@@ -193,4 +199,6 @@ export async function acceptUserToJoinGroup(adminID, userID, groupID) {
 			groups: groupID,
 		},
 	})
+
+	await createNotificationForJoinGroup(userID, groupID)
 }
