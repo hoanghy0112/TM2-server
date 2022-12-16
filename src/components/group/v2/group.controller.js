@@ -88,6 +88,7 @@ export async function httpAcceptUserToJoinGroup(req, res) {
 					await acceptUserToJoinGroup(adminID, userID, groupID),
 			),
 		)
+		updateGroupInfoToSocketByID(groupID)
 		return res.status(200).send('You has joined to group')
 	} catch (error) {
 		console.log({ error })
@@ -144,8 +145,7 @@ export async function httpRemoveUserFromGroup(req, res) {
 	try {
 		await removeUserFromGroup(memberID, groupID)
 
-		const newGroup = await getGroupByID(groupID)
-		updateGroupInfoToSocket(newGroup)
+		updateGroupInfoToSocketByID(groupID)
 
 		return res.status(200).send('Removed user')
 	} catch (error) {
@@ -203,6 +203,11 @@ export async function httpDeleteGroupByID(req, res) {
 
 export function updateGroupInfoToSocket(group) {
 	const { _id: groupID } = group
+	io.to(`group:${groupID}`).emit('group-info', group)
+}
+
+export async function updateGroupInfoToSocketByID(groupID) {
+	const group = await getGroupByID(groupID)
 	io.to(`group:${groupID}`).emit('group-info', group)
 }
 

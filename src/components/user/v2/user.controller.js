@@ -56,6 +56,8 @@ export async function httpAcceptJoinGroup(req, res) {
 
 	try {
 		await acceptJoinGroup(userID, groupID)
+		const groups = await getAllGroupsOfUser(userID)
+		io.to(`groups:${userID}`).emit('groups', groups)
 		return res.status(200).send('You has joined to group')
 	} catch (error) {
 		console.log({ error })
