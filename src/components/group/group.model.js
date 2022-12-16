@@ -132,7 +132,7 @@ export async function deleteGroupByID(groupID) {
 export async function inviteJoinGroup(adminID, userID, groupID) {
 	const { invitations, admin } = await GroupModel.findById(
 		groupID,
-		'invitation admin',
+		'invitations admin',
 	)
 
 	if (String(admin) !== String(adminID))
