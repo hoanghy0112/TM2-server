@@ -30,6 +30,7 @@ export function authorizeRouteMiddleware(req, res, next) {
 					email: userProfile.email,
 				}
 				user = await createUserInfo(profile)
+				
 			}
 
 			req.user = user
