@@ -27,7 +27,7 @@ userRouter.put(
 userRouter.get('/requests', authorizeRouteMiddleware, httpGetUserRequests)
 userRouter.get('/invitations', authorizeRouteMiddleware, httpGetUserInvitations)
 
-userRouter.get('/', authorizeRouteMiddleware, httpGetUserInfoByID)
+userRouter.get('/find', httpGetUserInfoByID)
 
 userRouter.put('/', authorizeRouteMiddleware, httpUpdateUserInfo)
 
