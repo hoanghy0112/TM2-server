@@ -4,6 +4,7 @@ import {
 	acceptJoinGroup,
 	findUserByName,
 	getUserInfo,
+	getUserInfoByID,
 	getUserInvitations,
 	getUserRequests,
 	requestJoinGroup,
@@ -71,6 +72,19 @@ export async function httpFindUserByName(req, res) {
 	const users = await findUserByName(name)
 
 	return res.status(200).json(users)
+}
+
+export async function httpGetUserInfoByID(req, res) {
+	const userID = req.query.id
+
+	try {
+		const user = await getUserInfoByID(userID)
+
+		res.status(200).send(user)
+	} catch (error) {
+		console.log({ error })
+		return res.status(400).send('Bad request')
+	}
 }
 
 export async function httpGetUserRequests(req, res) {

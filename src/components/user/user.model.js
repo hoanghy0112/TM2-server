@@ -82,6 +82,10 @@ export async function findUserByName(name) {
 	}).select('_id givenName familyName email photo')
 }
 
+export async function getUserInfoByID(userID) {
+	return await UserModel.findById(userID, 'givenName familyName email photo')
+}
+
 export async function requestJoinGroup(userID, groupID) {
 	const { requests } = await GroupModel.findById(groupID, 'requests')
 
