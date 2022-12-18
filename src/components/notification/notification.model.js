@@ -89,7 +89,7 @@ export async function createNotificationForJoinGroup(userID, groupID) {
 		belongTo: userID,
 		time: new Date(),
 		groupID,
-		type: 'notification',
+		type: 'join-group',
 	})
 
 	io.to(`notification:${userID}`).emit('notification', notification)
