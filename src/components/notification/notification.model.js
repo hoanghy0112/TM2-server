@@ -65,6 +65,7 @@ export async function createNotificationForInviteToGroup(userID, groupID) {
 		thumbnail: user.photo,
 		belongTo: userID,
 		time: new Date(),
+		type: 'invite',
 	})
 
 	io.to(`notification:${userID}`).emit('notification', notification)
@@ -85,6 +86,7 @@ export async function createNotificationForJoinGroup(userID, groupID) {
 		thumbnail: user.photo,
 		belongTo: userID,
 		time: new Date(),
+		type: 'notification',
 	})
 
 	io.to(`notification:${userID}`).emit('notification', notification)
@@ -112,6 +114,7 @@ export async function createNotificationForJoinAndOutGroup(
 				thumbnail: user.photo,
 				belongTo: id,
 				time: new Date(),
+				type: 'notification',
 			})
 			await UserModel.findByIdAndUpdate(id, {
 				$push: {

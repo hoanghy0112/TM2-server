@@ -32,7 +32,8 @@ export async function socketGetNotificationsOfUser(user) {
 }
 
 export async function socketSetReadNotification(user, notificationIDs) {
-	if (!notificationIDs) return res.status(400).send('Bad request')
+	if (!notificationIDs)
+		io.to(`notification:${user._id}`).emit('error-notification', error)
 
 	try {
 		await setReadNotifications(notificationIDs)

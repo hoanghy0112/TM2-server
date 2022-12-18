@@ -22,6 +22,7 @@ const NotificationSchema = new mongoose.Schema({
 	time: { type: Date, required: true },
 	isRead: { type: Boolean, default: false },
 	url: { type: String },
+	type: String,
 })
 
 const NotificationModel = mongoose.model('Notification', NotificationSchema)
