@@ -36,10 +36,8 @@ export async function socketSetReadNotification(user, notificationIDs) {
 
 	try {
 		await setReadNotifications(notificationIDs)
-		io.to(`notification:${user._id}`).emit(
-			'read-notification',
-			notificationIDs,
-		)
+		const notifications = await getAllNotificationsOfUser(userID)
+		io.to(`notification:${user._id}`).emit('notification', notifications)
 	} catch (error) {
 		io.to(`notification:${user._id}`).emit('error-notification', error)
 	}
