@@ -59,7 +59,7 @@ export async function createNotificationForJoinAndQuitTask(
 export async function createNotificationForInviteToGroup(userID, groupID) {
 	const group = await GroupModel.findById(groupID)
 	const user = await UserModel.findById(userID)
-	const admin = await UserModel.findById(group.admin)
+	const admin = await UserModel.findById(String(group.admin))
 
 	const notification = await createNewNotification({
 		content: `${admin.familyName} ${admin.givenName} đã mời bạn tham gia nhóm ${group.name}`,
