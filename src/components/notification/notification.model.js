@@ -63,7 +63,7 @@ export async function createNotificationForInviteToGroup(userID, groupID) {
 
 	const notification = await createNewNotification({
 		content: `${admin.familyName} ${admin.givenName} đã mời bạn tham gia nhóm ${group.name}`,
-		thumbnail: user.photo,
+		thumbnail: admin.photo,
 		belongTo: userID,
 		time: new Date(),
 		groupID,
