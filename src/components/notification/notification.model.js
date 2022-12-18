@@ -150,6 +150,7 @@ export async function createNewNotification({
 	groupID,
 	time,
 	url = '',
+	type,
 }) {
 	return await NotificationModel.create({
 		content,
@@ -160,5 +161,6 @@ export async function createNewNotification({
 		isRead: false,
 		time,
 		url,
+		type,
 	})
 }
