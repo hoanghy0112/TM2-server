@@ -19,7 +19,7 @@ const NotificationSchema = new mongoose.Schema({
 		ref: 'Group',
 		required: false,
 	},
-	time: { type: Date, required: true },
+	time: { type: Date, required: true, index: true },
 	isRead: { type: Boolean, default: false },
 	url: { type: String },
 	type: String,

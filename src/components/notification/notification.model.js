@@ -130,7 +130,7 @@ export async function createNotificationForJoinAndOutGroup(
 }
 
 export async function getAllNotificationsOfUser(userID) {
-	return await NotificationModel.find({ belongTo: userID })
+	return await NotificationModel.find({ belongTo: userID }).sort({ time: -1 })
 }
 
 export async function setReadNotifications(notificationID) {
