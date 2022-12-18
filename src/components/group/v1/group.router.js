@@ -15,7 +15,7 @@ const groupRouter = express.Router()
 
 groupRouter.post('/', authorizeRouteMiddleware, httpCreateNewGroup)
 groupRouter.get('/', authorizeRouteMiddleware, htppGetAllGroup)
-groupRouter.get('/:id', authorizeRouteMiddleware, httpGetGroupByID)
+groupRouter.get('/:id', httpGetGroupByID)
 groupRouter.get(
 	'/:groupID/tasks',
 	authorizeRouteMiddleware,
