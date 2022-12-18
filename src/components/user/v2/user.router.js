@@ -3,6 +3,7 @@ import { authorizeRouteMiddleware } from '../../../middleware/authentication'
 
 import {
 	httpAcceptJoinGroup,
+	httpGetUserInfoByID,
 	httpGetUserInvitations,
 	httpGetUserRequests,
 	httpRequestJoinGroup,
@@ -25,6 +26,8 @@ userRouter.put(
 )
 userRouter.get('/requests', authorizeRouteMiddleware, httpGetUserRequests)
 userRouter.get('/invitations', authorizeRouteMiddleware, httpGetUserInvitations)
+
+userRouter.get('/', authorizeRouteMiddleware, httpGetUserInfoByID)
 
 userRouter.put('/', authorizeRouteMiddleware, httpUpdateUserInfo)
 
