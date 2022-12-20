@@ -70,7 +70,7 @@ export async function createNotificationForInviteToGroup(userID, groupID) {
 		type: 'invite',
 	})
 
-	io.to(`notification:${userID}`).emit('notification', notification)
+	notifyUser(userID, notification)
 
 	await UserModel.findByIdAndUpdate(userID, {
 		$push: {
@@ -92,7 +92,7 @@ export async function createNotificationForJoinGroup(userID, groupID) {
 		type: 'join-group',
 	})
 
-	io.to(`notification:${userID}`).emit('notification', notification)
+	notifyUser(userID, notification)
 
 	await UserModel.findByIdAndUpdate(userID, {
 		$push: {
@@ -163,4 +163,11 @@ export async function createNewNotification({
 		url,
 		type,
 	})
+}
+
+async function notifyUser(userID, notification) {
+	const notifications = await getAllNotificationsOfUser(userID)
+
+	io.to(`notification:${userID}`).emit('notification', notifications)
+	io.to(`notification:${userID}`).emit('new-notification', notification)
 }
