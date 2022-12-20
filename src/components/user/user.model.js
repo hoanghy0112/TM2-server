@@ -87,19 +87,14 @@ export async function getUserInfoByID(userID) {
 }
 
 export async function requestJoinGroup(userID, groupID) {
-	const { requests } = await GroupModel.findById(groupID, 'requests')
-
-	if (requests.map((request) => String(request)).includes(String(userID)))
-		return
-
 	await GroupModel.findByIdAndUpdate(groupID, {
-		$push: {
+		$addToSet: {
 			requests: userID,
 		},
 	})
 
 	await UserModel.findByIdAndUpdate(userID, {
-		$push: {
+		$addToSet: {
 			requests: groupID,
 		},
 	})
@@ -107,7 +102,6 @@ export async function requestJoinGroup(userID, groupID) {
 
 export async function acceptJoinGroup(userID, groupID) {
 	const { invitations } = await GroupModel.findById(groupID, 'invitations')
-	console.log({ invitations, userID })
 
 	if (
 		!invitations
@@ -122,7 +116,7 @@ export async function acceptJoinGroup(userID, groupID) {
 		$pull: {
 			invitations: userID,
 		},
-		$push: {
+		$addToSet: {
 			users: userID,
 		},
 	})
@@ -131,7 +125,7 @@ export async function acceptJoinGroup(userID, groupID) {
 		$pull: {
 			invitations: groupID,
 		},
-		$push: {
+		$addToSet: {
 			groups: groupID,
 		},
 	})

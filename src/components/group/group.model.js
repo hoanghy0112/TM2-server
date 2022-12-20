@@ -144,21 +144,14 @@ export async function inviteJoinGroup(adminID, userID, groupID) {
 			msg: `${adminID} are not the admin of group ${groupID}`,
 		}
 
-	if (
-		invitations
-			.map((invitation) => String(invitation))
-			.includes(String(userID))
-	)
-		return
-
 	await GroupModel.findByIdAndUpdate(groupID, {
-		$push: {
+		$addToSet: {
 			invitations: userID,
 		},
 	})
 
 	await UserModel.findByIdAndUpdate(userID, {
-		$push: {
+		$addToSet: {
 			invitations: groupID,
 		},
 	})
