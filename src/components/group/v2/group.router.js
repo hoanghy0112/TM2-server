@@ -10,12 +10,14 @@ import {
 	httpGetAllBusyTimeOfGroup,
 	httpInviteJoinGroup,
 	httpRemoveUserFromGroup,
+	httpUpdateGroup,
 	socketGetGroupByID,
 } from './group.controller'
 
 const groupRouter = express.Router()
 
 groupRouter.post('/', authorizeRouteMiddleware, httpCreateNewGroup)
+groupRouter.put('/:groupID', authorizeRouteMiddleware, httpUpdateGroup)
 groupRouter.put('/:groupID/add', authorizeRouteMiddleware, httpAddUserToGroup)
 groupRouter.put(
 	'/:groupID/invite',
