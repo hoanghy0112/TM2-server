@@ -61,13 +61,15 @@ export async function getAllBusyTimeOfGroup(groupID, userID, from, to) {
 export async function getAllGroupsOfUser(userID) {
 	const userDocument = await UserModel.findById(userID)
 	const userWithGroups = await userDocument.populate('groups')
-	return userWithGroups.groups.map((group) => ({
-		_id: group._id,
-		name: group.name,
-		description: group.description,
-		users: group.users,
-		admin: group.admin,
-	}))
+	return userWithGroups.groups
+		.map((group) => ({
+			_id: group._id,
+			name: group.name,
+			description: group.description,
+			users: group.users,
+			admin: group.admin,
+		}))
+		.reverse()
 }
 
 export async function addUserToGroup(userID, groupID) {
