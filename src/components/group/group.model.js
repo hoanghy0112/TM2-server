@@ -101,7 +101,7 @@ export async function removeUserFromGroup(userID, groupID) {
 }
 
 export async function updateGroupByID(groupID, groupData) {
-	await GroupModel.findByIdAndUpdate(groupID, groupData, { new: true })
+	return await GroupModel.findByIdAndUpdate(groupID, groupData, { new: true })
 }
 
 export async function deleteGroupByID(groupID) {

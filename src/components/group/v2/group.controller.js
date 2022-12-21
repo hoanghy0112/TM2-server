@@ -169,7 +169,7 @@ export async function httpUpdateGroup(req, res) {
 
 	try {
 		const newGroup = await updateGroupByID(groupID, groupData)
-		updateGroupInfoToSocket(newGroup)
+		updateGroupInfoToSocketByID(groupID)
 
 		return res.status(200).send('Update Successfully')
 	} catch (error) {
