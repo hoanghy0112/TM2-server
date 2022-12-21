@@ -154,6 +154,7 @@ export async function httpRemoveUserFromGroup(req, res) {
 }
 
 export async function httpUpdateGroup(req, res) {
+	const userID = req.user._id
 	const groupID = req.params.groupID
 	const groupData = req.body
 

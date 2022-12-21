@@ -22,12 +22,11 @@ export async function createNewGroup(userID, { name, description }) {
 }
 
 export async function getGroupByID(groupID) {
-	const groupDocument = await GroupModel.findOne({ _id: groupID }).select(
+	const groupDocument = await GroupModel.findById(groupID).select(
 		'_id name description users admin',
 	)
-	// if (groupDocument) return await groupDocument.populate('users')
+
 	return groupDocument
-	return {}
 }
 
 export async function getAllBusyTimeOfGroup(groupID, userID, from, to) {
