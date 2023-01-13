@@ -6,7 +6,7 @@ import {
 	getAllTaskOfUser,
 	getTaskByID,
 	updateTaskByID,
-	changeTaskDay
+	changeTaskDay,
 } from './task.model'
 
 // export async function httpCreateNewTask(req, res) {
@@ -35,8 +35,7 @@ export async function httpCreateNewTask(req, res) {
 	const userID = req.user._id
 	if (!userID || !taskData) return res.status(400).send('Bad request')
 	try {
-		console.log(taskData)
-		await createNewTask(userID, taskData)
+		await createNewTask([userID], taskData)
 		return res.status(200).send('Create successfully')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
@@ -97,8 +96,7 @@ export async function httpDeleteTaskByID(req, res) {
 export async function httpChangeDay(req, res) {
 	const taskID = req.params.taskID
 	const taskData = req.body.taskData
-	if (!taskID || !taskData)
-		return res.status(400).send('Bad request')
+	if (!taskID || !taskData) return res.status(400).send('Bad request')
 	try {
 		await changeTaskDay(taskID, taskData)
 		return res.status(200).send('Update successfully')

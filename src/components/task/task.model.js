@@ -70,24 +70,35 @@ export async function deleteTaskByID(userID, taskID) {
 	}
 }
 
-export async function createNewTask(userID, task) {
-	const newTask = await (await TaskModel.create(task)).populate('tags')
+export async function createNewTask(userIDs, task) {
+	const newTask = await (
+		await TaskModel.create({ ...task, participants: userIDs })
+	).populate('tags participants')
 
 	// add new task to user
-	await UserModel.findByIdAndUpdate(userID, {
-		$push: {
-			tasks: newTask._id,
-		},
-	})
+	// await UserModel.findByIdAndUpdate(userIDs, {
+	// 	$push: {
+	// 		tasks: newTask._id,
+	// 	},
+	// })
+
+	// // add new task to all participants
+	// newTask.participants.forEach(async (tagID) => {
+	// 	await TagModel.findByIdAndUpdate(tagID, {
+	// 		$push: {
+	// 			tasks: newTask._id,
+	// 		},
+	// 	})
+	// })
 
 	// add task to tags
-	newTask.tags.forEach(async (tagID) => {
-		await TagModel.findByIdAndUpdate(tagID, {
-			$push: {
-				tasks: newTask._id,
-			},
-		})
-	})
+	// newTask.tags.forEach(async (tagID) => {
+	// 	await TagModel.findByIdAndUpdate(tagID, {
+	// 		$push: {
+	// 			tasks: newTask._id,
+	// 		},
+	// 	})
+	// })
 }
 
 export async function removeTaskFromTag(tagID, taskID) {

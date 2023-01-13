@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const UserModel = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
 	{
 		userID: {
 			type: String,
@@ -93,4 +93,8 @@ const UserModel = new mongoose.Schema(
 	},
 )
 
-export default mongoose.model('User', UserModel)
+const UserModel = mongoose.model('User', UserSchema)
+
+// UserModel.watch().on('change', (data) => console.log(data))
+
+export default UserModel
