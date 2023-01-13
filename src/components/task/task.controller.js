@@ -55,9 +55,11 @@ export async function httpGetTaskByID(req, res) {
 
 export async function httpGetAllTaskOfUser(req, res) {
 	const userID = req.user._id
+	const { from, to } = req.query
+
 	if (!userID) return res.status(400).send('Bad request')
 	try {
-		const tasks = await getAllTaskOfUser(userID)
+		const tasks = await getAllTaskOfUser(userID, from, to)
 		return res.status(200).json(tasks)
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)

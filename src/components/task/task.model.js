@@ -6,10 +6,33 @@ export async function getTaskByID(taskID) {
 	return await TaskModel.findById(taskID)
 }
 
-export async function getAllTaskOfUser(userID) {
+export async function getAllTaskOfUser(userID, from, to) {
 	const user = await UserModel.findById(userID)
 	const populatedUser = await user.populate('tasks')
-	return populatedUser.tasks
+
+	const now = new Date()
+	const defaultFrom = new Date(
+		now.getFullYear(),
+		now.getMonth(),
+		now.getDate() - now.getDay() + 1,
+		0,
+		0,
+		0,
+	)
+	const defaultTo = new Date(
+		now.getFullYear(),
+		now.getMonth(),
+		defaultFrom.getDate() + 7,
+		0,
+		0,
+		0,
+	)
+
+	return populatedUser.tasks.filter(
+		({ time }) =>
+			new Date(from || defaultFrom) < new Date(time.from) &&
+			new Date(to || defaultTo) > new Date(time.from),
+	)
 }
 
 export async function updateTaskByID(userID, taskID, taskData) {
@@ -42,25 +65,7 @@ export async function deleteTaskByID(userID, taskID) {
 	const allTasksOfUser = await getAllTaskOfUser(userID)
 
 	if (allTasksOfUser.find((task) => task._id == taskID)) {
-		const task = await (
-			await TaskModel.findByIdAndDelete(taskID)
-		).populate('tags')
-
-		// remove task from user
-		await UserModel.findByIdAndUpdate(userID, {
-			$pull: {
-				tasks: task._id,
-			},
-		})
-
-		// remove task from tags
-		task.tags.forEach(async (tagID) => {
-			await TagModel.findByIdAndUpdate(tagID, {
-				$pull: {
-					tasks: task._id,
-				},
-			})
-		})
+		const task = await TaskModel.findByIdAndDelete(taskID)
 
 		return true
 	} else {
@@ -74,31 +79,6 @@ export async function createNewTask(userIDs, task) {
 	const newTask = await (
 		await TaskModel.create({ ...task, participants: userIDs })
 	).populate('tags participants')
-
-	// add new task to user
-	// await UserModel.findByIdAndUpdate(userIDs, {
-	// 	$push: {
-	// 		tasks: newTask._id,
-	// 	},
-	// })
-
-	// // add new task to all participants
-	// newTask.participants.forEach(async (tagID) => {
-	// 	await TagModel.findByIdAndUpdate(tagID, {
-	// 		$push: {
-	// 			tasks: newTask._id,
-	// 		},
-	// 	})
-	// })
-
-	// add task to tags
-	// newTask.tags.forEach(async (tagID) => {
-	// 	await TagModel.findByIdAndUpdate(tagID, {
-	// 		$push: {
-	// 			tasks: newTask._id,
-	// 		},
-	// 	})
-	// })
 }
 
 export async function removeTaskFromTag(tagID, taskID) {
