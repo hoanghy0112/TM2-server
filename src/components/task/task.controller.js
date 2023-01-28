@@ -1,5 +1,3 @@
-// import { addNewTaskToTag } from '../tag/tag.model'
-// import { addNewTaskToUser } from '../user/user.model'
 import {
 	createNewTask,
 	deleteTaskByID,
@@ -8,27 +6,6 @@ import {
 	updateTaskByID,
 	changeTaskDay,
 } from './task.model'
-
-// export async function httpCreateNewTask(req, res) {
-// 	const taskData = req.body
-// 	const userID = req.user._id
-
-// 	try {
-// 		const newTask = await createNewTask(taskData)
-
-// 		const { participants, tags } = newTask
-
-// 		participants.forEach((user) => addNewTaskToUser(user, newTask))
-// 		addNewTaskToUser(userID, newTask)
-
-// 		tags.forEach((tag) => addNewTaskToTag(tag, newTask))
-
-// 		return res.status(200).json(newTask)
-// 	} catch (error) {
-// 		console.log(error)
-// 		return res.status(400).send(error)
-// 	}
-// }
 
 export async function httpCreateNewTask(req, res) {
 	const taskData = req.body

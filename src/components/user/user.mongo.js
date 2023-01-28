@@ -43,12 +43,12 @@ const UserSchema = new mongoose.Schema(
 				ref: 'Task',
 			},
 		],
-		groupTasks: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'groupTask',
-			},
-		],
+		// groupTasks: [
+		// 	{
+		// 		type: mongoose.Schema.Types.ObjectId,
+		// 		ref: 'groupTask',
+		// 	},
+		// ],
 		tags: [
 			{
 				type: mongoose.Schema.Types.ObjectId,
