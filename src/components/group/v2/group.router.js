@@ -1,7 +1,7 @@
 import express from 'express'
 import { authorizeRouteMiddleware } from '../../../middleware/authentication'
 
-import { getAllGrTasksOfUser } from '../../groupTask/groupTask.model'
+import { getAllGrTasksOfGroup } from '../../groupTask/groupTask.model'
 import {
 	httpAcceptUserToJoinGroup,
 	httpAddUserToGroup,
@@ -43,7 +43,7 @@ groupRouter.put(
 groupRouter.delete('/:groupID', authorizeRouteMiddleware, httpDeleteGroupByID)
 
 export async function setupGroupSocketListener(socket, user) {
-	const groupIDs = (await getAllGrTasksOfUser(user._id)).map(
+	const groupIDs = (await getAllGrTasksOfGroup(user._id)).map(
 		(group) => group._id,
 	)
 

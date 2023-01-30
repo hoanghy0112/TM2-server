@@ -2,7 +2,7 @@ import express from 'express'
 import {
 	httpCreateNewTask,
 	httpDeleteTaskByID,
-	httpGetAllGrTaskOfUser,
+	httpGetAllGrTaskOfGroup,
 	httpGetTaskByID,
 	httpUpdateTaskByID,
 	httpJoinTask,
@@ -14,7 +14,11 @@ import { authorizeRouteMiddleware } from '../../middleware/authentication'
 const groupTaskRouter = express.Router()
 
 groupTaskRouter.post('/', authorizeRouteMiddleware, httpCreateNewTask)
-groupTaskRouter.get('/', authorizeRouteMiddleware, httpGetAllGrTaskOfUser)
+groupTaskRouter.get(
+	'/:groupID',
+	authorizeRouteMiddleware,
+	httpGetAllGrTaskOfGroup,
+)
 // update chung chung như là tile, time ...
 groupTaskRouter.put('/:taskID', authorizeRouteMiddleware, httpUpdateTaskByID)
 groupTaskRouter.get('/:taskID', authorizeRouteMiddleware, httpGetTaskByID)

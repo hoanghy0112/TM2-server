@@ -1,5 +1,10 @@
 import {
-    addGrTaskToUser, createNewTask, deleteGrTaskByID, getAllGrTasksOfUser, removeGrTaskFromUser, updateGrTaskByID
+	addGrTaskToUser,
+	createNewTask,
+	deleteGrTaskByID,
+	getAllGrTasksOfGroup,
+	removeGrTaskFromUser,
+	updateGrTaskByID,
 } from './groupTask.model'
 import GroupTaskModel from './groupTask.mongo'
 
@@ -15,11 +20,13 @@ export async function httpCreateNewTask(req, res) {
 	}
 }
 
-export async function httpGetAllGrTaskOfUser(req, res) {
+export async function httpGetAllGrTaskOfGroup(req, res) {
 	const userID = req.user._id
-	if (!userID) return res.status(400).send('Bad request')
+	const { groupID } = req.params
+
+	if (!userID || !groupID) return res.status(400).send('Bad request')
 	try {
-		const tasks = await getAllGrTasksOfUser(userID)
+		const tasks = await getAllGrTasksOfGroup(groupID)
 		return res.status(200).json(tasks)
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
@@ -29,9 +36,9 @@ export async function httpGetAllGrTaskOfUser(req, res) {
 export async function httpUpdateTaskByID(req, res) {
 	const taskID = req.params.taskID
 	const taskData = req.body
-    const userID = req.user._id
-    if (!taskID || !taskData) return res.status(400).send('Bad request')
-    try {
+	const userID = req.user._id
+	if (!taskID || !taskData) return res.status(400).send('Bad request')
+	try {
 		await updateGrTaskByID(userID, taskID, taskData)
 		return res.status(200).send('Update successfully')
 	} catch (error) {
