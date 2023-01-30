@@ -32,9 +32,14 @@ export async function createNewTask(userID, taskData) {
 }
 
 export async function getAllGrTasksOfGroup(groupID) {
-	const group = await GroupModel.findById(groupID)
-	const groupWithTask = await group.populate('tasks')
-	return groupWithTask.tasks
+	console.log({ groupID })
+	try {
+		const group = await GroupModel.findById(groupID)
+		const groupWithTask = await group.populate('tasks')
+		return groupWithTask.tasks
+	} catch {
+		throw 'cannot populate'
+	}
 }
 
 export async function updateGrTaskByID(userID, taskID, taskData) {
