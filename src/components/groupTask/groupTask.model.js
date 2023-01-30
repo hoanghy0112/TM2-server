@@ -24,11 +24,11 @@ export async function createNewTask(userID, taskData) {
 		},
 	})
 
-	await createNotificationForCreateAndUpdateTask(
-		userID,
-		groupID,
-		'vừa tạo một task mới!',
-	)
+	// await createNotificationForCreateAndUpdateTask(
+	// 	userID,
+	// 	groupID,
+	// 	'vừa tạo một task mới!',
+	// )
 }
 
 export async function getAllGrTasksOfGroup(groupID) {
@@ -71,11 +71,11 @@ export async function updateGrTaskByID(userID, taskID, taskData) {
 
 	await TaskModel.findByIdAndUpdate(taskID, taskData)
 	const grTask = await TaskModel.findById(taskID)
-	await createNotificationForCreateAndUpdateTask(
-		userID,
-		grTask.belongTo,
-		'vừa cập nhật task!',
-	)
+	// await createNotificationForCreateAndUpdateTask(
+	// 	userID,
+	// 	grTask.belongTo,
+	// 	'vừa cập nhật task!',
+	// )
 }
 
 export async function deleteGrTaskByID(taskID) {
