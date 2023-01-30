@@ -47,10 +47,7 @@ export async function getAllBusyTimeOfGroup(groupID, userID, from, to) {
 			$in: allTaskIDs,
 		},
 		belongTo: {
-			$or: {
-				$exists: false,
-				$ne: groupID,
-			},
+			$or: [{ $exists: false }, { $ne: groupID }],
 		},
 		'time.from': {
 			$gt: from,
