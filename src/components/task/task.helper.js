@@ -1,3 +1,7 @@
+import GroupModel from "../group/group.mongo"
+import TagModel from "../tag/tag.mongo"
+import UserModel from "../user/user.mongo"
+
 export function addNewTaskToUser(newTask, userIDs) {
 	userIDs.forEach(async (userID) => {
 		await UserModel.findByIdAndUpdate(userID, {

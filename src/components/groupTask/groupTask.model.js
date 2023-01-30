@@ -1,12 +1,12 @@
 import GroupModel from '../group/group.mongo'
 import UserModel from '../user/user.mongo'
 import GroupTaskModel from './groupTask.mongo'
+import TaskModel from '../task/task.mongo'
 
 import {
 	createNotificationForCreateAndUpdateTask,
 	createNotificationForJoinAndQuitTask,
 } from '../notification/notification.model'
-import TaskModel from '../task/task.mongo'
 
 export async function createNewTask(userID, taskData) {
 	const newTask = await TaskModel.create(taskData)
@@ -34,7 +34,7 @@ export async function createNewTask(userID, taskData) {
 export async function getAllGrTasksOfGroup(groupID) {
 	const group = await GroupModel.findById(groupID)
 	const groupWithTask = await group.populate('tasks')
-	return groupWithTask.groupTasks
+	return groupWithTask.tasks
 }
 
 export async function updateGrTaskByID(userID, taskID, taskData) {
