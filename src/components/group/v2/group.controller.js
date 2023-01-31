@@ -191,7 +191,7 @@ export async function httpDeleteGroupByID(req, res) {
 		return res.status(400).send('You are not admin')
 
 	try {
-		const memberIDs = await deleteGroupByID(groupID)
+		const memberIDs = await deleteGroupByID(userID, groupID)
 
 		memberIDs.forEach(async (memberID) => {
 			const groups = await getAllGroupsOfUser(memberID)

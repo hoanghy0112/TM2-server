@@ -8,6 +8,7 @@ import {
 	createNotificationForJoinAndOutGroup,
 	createNotificationForJoinGroup,
 } from '../notification/notification.model'
+import { deleteTaskByID } from '../task/task.model'
 
 export async function createNewGroup(userID, { name, description }) {
 	const group = await GroupModel.create({ name, description, admin: userID })
@@ -105,7 +106,7 @@ export async function updateGroupByID(groupID, groupData) {
 	return await GroupModel.findByIdAndUpdate(groupID, groupData, { new: true })
 }
 
-export async function deleteGroupByID(groupID) {
+export async function deleteGroupByID(userID, groupID) {
 	const group = await GroupModel.findById(groupID)
 	const memberIDs = [...group.users, group.admin]
 	group.users.forEach(
@@ -121,17 +122,18 @@ export async function deleteGroupByID(groupID) {
 			groups: groupID,
 		},
 	})
-	group.groupTasks.forEach(async (taskID) => {
-		const task = await GroupTaskModel.findById(taskID)
-		task.participants.forEach(
-			async (userID) =>
-				await UserModel.findByIdAndUpdate(userID, {
-					$pull: {
-						groupTasks: taskID,
-					},
-				}),
-		)
-		await GroupTaskModel.findByIdAndDelete(taskID)
+	group.tasks?.forEach(async (taskID) => {
+		// const task = await TaskModel.findById(taskID)
+		// task.participants.forEach(
+		// 	async (userID) =>
+		// 		await UserModel.findByIdAndUpdate(userID, {
+		// 			$pull: {
+		// 				groupTasks: taskID,
+		// 			},
+		// 		}),
+		// )
+		// await GroupTaskModel.findByIdAndDelete(taskID)
+		deleteTaskByID(userID, taskID)
 	})
 	await GroupModel.findByIdAndDelete(groupID)
 	return memberIDs

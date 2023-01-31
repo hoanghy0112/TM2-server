@@ -65,7 +65,7 @@ export async function deleteTaskByID(userID, taskID) {
 	const allTasksOfUser = await getAllTaskOfUser(userID)
 
 	if (allTasksOfUser.find((task) => task._id == taskID)) {
-		const task = await TaskModel.findByIdAndDelete(taskID)
+		await TaskModel.findByIdAndDelete(taskID)
 
 		return true
 	} else {
