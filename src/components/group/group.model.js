@@ -107,6 +107,7 @@ export async function updateGroupByID(groupID, groupData) {
 
 export async function deleteGroupByID(groupID) {
 	const group = await GroupModel.findById(groupID)
+	const memberIDs = [...group.users, group.admin]
 	group.users.forEach(
 		async (userID) =>
 			await UserModel.findByIdAndUpdate(userID, {
@@ -133,6 +134,7 @@ export async function deleteGroupByID(groupID) {
 		await GroupTaskModel.findByIdAndDelete(taskID)
 	})
 	await GroupModel.findByIdAndDelete(groupID)
+	return memberIDs
 }
 
 export async function inviteJoinGroup(adminID, userID, groupID) {
