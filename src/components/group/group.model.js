@@ -109,30 +109,15 @@ export async function updateGroupByID(groupID, groupData) {
 export async function deleteGroupByID(userID, groupID) {
 	const group = await GroupModel.findById(groupID)
 	const memberIDs = [...group.users, group.admin]
-	group.users.forEach(
-		async (userID) =>
-			await UserModel.findByIdAndUpdate(userID, {
-				$pull: {
-					groups: groupID,
-				},
-			}),
-	)
-	await UserModel.findByIdAndUpdate(group.admin, {
-		$pull: {
-			groups: groupID,
-		},
+	memberIDs.forEach((userID) => {
+		UserModel.findByIdAndUpdate(group.admin, {
+			$pull: {
+				groups: groupID,
+			},
+		})
 	})
+
 	group.tasks?.forEach(async (taskID) => {
-		// const task = await TaskModel.findById(taskID)
-		// task.participants.forEach(
-		// 	async (userID) =>
-		// 		await UserModel.findByIdAndUpdate(userID, {
-		// 			$pull: {
-		// 				groupTasks: taskID,
-		// 			},
-		// 		}),
-		// )
-		// await GroupTaskModel.findByIdAndDelete(taskID)
 		deleteTaskByID(userID, taskID)
 	})
 	await GroupModel.findByIdAndDelete(groupID)

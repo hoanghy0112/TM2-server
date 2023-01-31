@@ -169,6 +169,8 @@ export async function httpUpdateGroup(req, res) {
 
 	try {
 		const newGroup = await updateGroupByID(groupID, groupData)
+		// console.log({ newGroup })
+		// const memberIDs = [newGroup.users, newGroup.admin]
 		updateGroupInfoToSocketByID(groupID)
 
 		return res.status(200).send('Update Successfully')
