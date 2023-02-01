@@ -43,10 +43,6 @@ groupRouter.put(
 groupRouter.delete('/:groupID', authorizeRouteMiddleware, httpDeleteGroupByID)
 
 export async function setupGroupSocketListener(socket, user) {
-	// const groupIDs = (await getAllGrTasksOfGroup(user._id)).map(
-	// 	(group) => group._id,
-	// )
-
 	socket.on('group-info', (groupID) => socketGetGroupByID(socket, groupID))
 }
 

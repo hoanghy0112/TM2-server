@@ -39,21 +39,21 @@ export async function updateTaskByID(userID, taskID, taskData) {
 	const allTaskOfUser = await getAllTaskOfUser(userID)
 
 	if (allTaskOfUser.find((task) => task._id == taskID)) {
-		const existTag = []
-		if (taskData?.tags) {
-			const newTags = taskData.tags
-			const task = await TaskModel.findById(taskID)
-			task.tags.forEach(async (tagID) => {
-				if (newTags.find((newTagID) => newTagID == tagID))
-					existTag.push(tagID)
-				else await removeTaskFromTag(tagID, taskID)
-			})
-			newTags.forEach(async (tagID) => {
-				if (!existTag.find((existTagID) => existTagID == tagID))
-					await addTaskToTag(tagID, taskID)
-			})
-		}
-		await TaskModel.findByIdAndUpdate(taskID, taskData)
+		// const existTag = []
+		// if (taskData?.tags) {
+		// 	const newTags = taskData.tags
+		// 	const task = await TaskModel.findById(taskID)
+		// 	task.tags.forEach(async (tagID) => {
+		// 		if (newTags.find((newTagID) => newTagID == tagID))
+		// 			existTag.push(tagID)
+		// 		else await removeTaskFromTag(tagID, taskID)
+		// 	})
+		// 	newTags.forEach(async (tagID) => {
+		// 		if (!existTag.find((existTagID) => existTagID == tagID))
+		// 			await addTaskToTag(tagID, taskID)
+		// 	})
+		// }
+		return await TaskModel.findByIdAndUpdate(taskID, taskData)
 	} else {
 		throw {
 			code: 403,
@@ -65,9 +65,10 @@ export async function deleteTaskByID(userID, taskID) {
 	const allTasksOfUser = await getAllTaskOfUser(userID)
 
 	if (allTasksOfUser.find((task) => task._id == taskID)) {
+		const task = TaskModel.findById(taskID)
 		await TaskModel.findByIdAndDelete(taskID)
 
-		return true
+		return task
 	} else {
 		throw {
 			code: 403,
@@ -80,6 +81,7 @@ export async function createNewTask(userIDs, task) {
 		...task,
 		participants: [...userIDs, ...(task?.participants || [])],
 	})
+	return newTask
 }
 
 export async function removeTaskFromTag(tagID, taskID) {

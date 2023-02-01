@@ -5,10 +5,10 @@ import {
 	httpGetAllTaskOfUser,
 	httpGetTaskByID,
 	httpUpdateTaskByID,
-	httpChangeDay
+	httpChangeDay,
 } from './task.controller'
 
-import { authorizeRouteMiddleware } from '../../middleware/authentication'
+import { authorizeRouteMiddleware } from '../../../middleware/authentication'
 
 const taskRouter = express.Router()
 
