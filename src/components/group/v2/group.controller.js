@@ -59,9 +59,7 @@ export async function socketGetAllBusyTimeOfGroup(socket, groupID, from, to) {
 	try {
 		const busyTimes = await getAllBusyTimeOfGroup(groupID, '', from, to)
 		io.to(`busy:${groupID}`).emit('busy', busyTimes)
-		// return res.status(200).json(busyTimes)
 	} catch (error) {
-		// return res.status(500).send('Server error: ' + error.message)
 		io.to(`busy:${groupID}`).emit('error', error)
 	}
 }

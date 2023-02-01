@@ -39,20 +39,6 @@ export async function updateTaskByID(userID, taskID, taskData) {
 	const allTaskOfUser = await getAllTaskOfUser(userID)
 
 	if (allTaskOfUser.find((task) => task._id == taskID)) {
-		// const existTag = []
-		// if (taskData?.tags) {
-		// 	const newTags = taskData.tags
-		// 	const task = await TaskModel.findById(taskID)
-		// 	task.tags.forEach(async (tagID) => {
-		// 		if (newTags.find((newTagID) => newTagID == tagID))
-		// 			existTag.push(tagID)
-		// 		else await removeTaskFromTag(tagID, taskID)
-		// 	})
-		// 	newTags.forEach(async (tagID) => {
-		// 		if (!existTag.find((existTagID) => existTagID == tagID))
-		// 			await addTaskToTag(tagID, taskID)
-		// 	})
-		// }
 		return await TaskModel.findByIdAndUpdate(taskID, taskData, { new: true })
 	} else {
 		throw {

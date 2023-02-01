@@ -105,6 +105,7 @@ function socketSendDeleteTask(taskID, userIDs) {
 
 async function socketUpdateBusyTime(task) {
 	const groupIDs = await getAllGroupIDOfTask(task._id)
+	console.log({ groupIDs })
 
 	groupIDs.forEach((groupID) => {
 		io.to(`busy:${groupID}`).emit('update-task', task)
@@ -124,11 +125,10 @@ async function getAllGroupIDOfTask(taskID) {
 
 	const belongTo = task?.belongTo
 	const memberIDs = task.participants
-	const groupIDs = new Set([belongTo])
+	const groupIDs = new Set(belongTo ? [belongTo] : [])
 	await Promise.all(
 		memberIDs.map(async (memberID) => {
 			const memberInfo = await getUserInfo(memberID)
-			console.log({ memberID })
 			memberInfo?.groups?.forEach((groupID) => groupIDs.add(groupID))
 		}),
 	)
