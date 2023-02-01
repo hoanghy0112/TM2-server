@@ -4,7 +4,7 @@ import UserModel from './user.mongo'
 
 export async function getUserInfo(userID) {
 	const userInfo = await UserModel.findOne({ userID }).select(
-		'_id userID givenName familyName email photo groups',
+		'_id userID givenName familyName email photo',
 	)
 	return userInfo
 }
@@ -83,7 +83,10 @@ export async function findUserByName(name) {
 }
 
 export async function getUserInfoByID(userID) {
-	return await UserModel.findById(userID, 'givenName familyName email photo')
+	return await UserModel.findById(
+		userID,
+		'givenName familyName email photo groups',
+	)
 }
 
 export async function requestJoinGroup(userID, groupID) {

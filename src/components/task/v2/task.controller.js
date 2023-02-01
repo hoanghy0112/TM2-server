@@ -1,5 +1,5 @@
 import io from '../../../../bin/socketServer'
-import { getUserInfo } from '../../user/user.model'
+import { getUserInfo, getUserInfoByID } from '../../user/user.model'
 import {
 	createNewTask,
 	deleteTaskByID,
@@ -128,7 +128,7 @@ async function getAllGroupIDOfTask(taskID) {
 	const groupIDs = new Set(belongTo ? [belongTo] : [])
 	await Promise.all(
 		memberIDs.map(async (memberID) => {
-			const memberInfo = await getUserInfo(memberID)
+			const memberInfo = await getUserInfoByID(memberID)
 			memberInfo?.groups?.forEach((groupID) => groupIDs.add(groupID))
 		}),
 	)
