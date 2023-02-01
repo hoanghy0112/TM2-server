@@ -86,6 +86,10 @@ function socketSendNewTaskToParticipants(userIDs, task) {
 }
 
 function socketSendUpdatedTask(task) {
+	const participants = task.participants || []
+	participants.forEach((userID) => {
+		io.to(`tasks:${userID}`).emit('update-task', task)
+	})
 	io.to(`task:${task._id}`).emit('task', task)
 	socketUpdateBusyTime(task)
 }
