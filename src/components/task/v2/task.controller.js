@@ -79,7 +79,7 @@ export async function httpDeleteTaskByID(req, res) {
 
 function socketSendNewTaskToParticipants(userIDs, task) {
 	userIDs.forEach((userID) => {
-		io.to(`tasks:${userID}`).emit('task', task)
+		io.to(`tasks:${userID}`).emit('new-task', task)
 	})
 	socketUpdateBusyTime(task)
 }
