@@ -81,6 +81,7 @@ export async function createNewTask(userIDs, task) {
 		...task,
 		participants: [...userIDs, ...(task?.participants || [])],
 	})
+	console.log({ newTask })
 	return newTask
 }
 
