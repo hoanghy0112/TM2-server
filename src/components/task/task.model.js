@@ -53,7 +53,7 @@ export async function updateTaskByID(userID, taskID, taskData) {
 		// 			await addTaskToTag(tagID, taskID)
 		// 	})
 		// }
-		return await TaskModel.findByIdAndUpdate(taskID, taskData)
+		return await TaskModel.findByIdAndUpdate(taskID, taskData, { new: true })
 	} else {
 		throw {
 			code: 403,
