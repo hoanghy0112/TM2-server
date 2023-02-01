@@ -41,6 +41,7 @@ export async function httpCreateNewTask(req, res) {
 	try {
 		const newTask = await createNewTask([userID], taskData)
 		socketSendNewTaskToParticipants(memberIDs, newTask)
+		// console.log({ memberIDs })
 		return res.status(200).send('Create successfully')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
@@ -118,12 +119,13 @@ async function getAllGroupIDOfTask(taskID) {
 	const task = await getTaskByID(taskID)
 
 	const belongTo = task?.belongTo
-	const memberIDs = [task.admin, ...task.participants]
+	const memberIDs = task.participants
 	const groupIDs = new Set([belongTo])
 	await Promise.all(
 		memberIDs.map(async (memberID) => {
 			const memberInfo = await getUserInfo(memberID)
-			memberInfo.groups?.forEach((groupID) => groupIDs.add(groupID))
+			console.log({ memberID })
+			memberInfo?.groups?.forEach((groupID) => groupIDs.add(groupID))
 		}),
 	)
 

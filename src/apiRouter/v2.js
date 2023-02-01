@@ -7,7 +7,7 @@ import userRouter, {
 	setupUserSocketListener,
 } from '../components/user/v2/user.router'
 
-import taskRouter from '../components/task/v1/task.router'
+import taskRouter from '../components/task/v2/task.router'
 import { authorizeSocketMiddleware } from '../middleware/socketAuthentication'
 import { setupTaskSocketListener } from '../components/task/v2/task.router'
 

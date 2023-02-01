@@ -1,5 +1,6 @@
 import io from '../../../../bin/socketServer'
-import { getAllGroupsOfUser } from '../../group/group.model'
+import { getAllGroupsOfUser, getGroupByID } from '../../group/group.model'
+import { updateGroupInfoToSocketByID } from '../../group/v2/group.controller'
 import {
 	acceptJoinGroup,
 	findUserByName,
@@ -57,8 +58,13 @@ export async function httpAcceptJoinGroup(req, res) {
 
 	try {
 		await acceptJoinGroup(userID, groupID)
+
 		const groups = await getAllGroupsOfUser(userID)
 		io.to(`groups:${userID}`).emit('groups', groups)
+
+		const group = await getGroupByID(groupID)
+		updateGroupInfoToSocketByID(groupID, group)
+
 		return res.status(200).send('You has joined to group')
 	} catch (error) {
 		console.log({ error })

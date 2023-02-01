@@ -22,7 +22,7 @@ export async function createNewGroup(userID, { name, description }) {
 }
 
 export async function getGroupByID(groupID) {
-	if (!groupID) return {}
+	if (groupID == 'undefined') return {}
 
 	const groupDocument = await GroupModel.findById(groupID).select(
 		'_id name description users admin',

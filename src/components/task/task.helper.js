@@ -1,6 +1,6 @@
-import GroupModel from "../group/group.mongo"
-import TagModel from "../tag/tag.mongo"
-import UserModel from "../user/user.mongo"
+import GroupModel from '../group/group.mongo'
+import TagModel from '../tag/tag.mongo'
+import UserModel from '../user/user.mongo'
 
 export function addNewTaskToUser(newTask, userIDs) {
 	userIDs.forEach(async (userID) => {
@@ -22,12 +22,17 @@ export function addNewTaskToTag(newTask, tagIDs) {
 	})
 }
 
-export function addNewTaskToGroup(newTask, groupID) {
-	GroupModel.findByIdAndUpdate(groupID, {
-		$addToSet: {
-			tasks: newTask._id,
+export async function addNewTaskToGroup(newTask, groupID) {
+	const result = await GroupModel.findByIdAndUpdate(
+		groupID,
+		{
+			$addToSet: {
+				tasks: newTask._id,
+			},
 		},
-	})
+		{ new: true },
+	)
+	console.log({ result, id: newTask._id })
 }
 
 export function deleteTaskFromUser(taskID, userIDs) {
@@ -50,8 +55,8 @@ export function deleteTaskFromTag(taskID, tagIDs) {
 	})
 }
 
-export function deleteTaskFromGroup(taskID, groupID) {
-	GroupModel.findByIdAndUpdate(groupID, {
+export async function deleteTaskFromGroup(taskID, groupID) {
+	await GroupModel.findByIdAndUpdate(groupID, {
 		$pull: {
 			tasks: taskID,
 		},
@@ -59,11 +64,11 @@ export function deleteTaskFromGroup(taskID, groupID) {
 }
 
 export function updateTask(taskID, updatedFields) {
-   const fields = Array.from(Object.entries(updatedFields))
+	const fields = Array.from(Object.entries(updatedFields))
 
-   const tagRegEx = /^tags.\d+$/
-   
-   // fields.forEach(([key, value]) => {
-   //    if (tagRegEx.test(key))
-   // })
+	const tagRegEx = /^tags.\d+$/
+
+	// fields.forEach(([key, value]) => {
+	//    if (tagRegEx.test(key))
+	// })
 }

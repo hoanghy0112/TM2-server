@@ -41,7 +41,7 @@ TaskModel.watch().on('change', async (data) => {
 
 		addNewTaskToUser(newTask, newTask.participants)
 		addNewTaskToTag(newTask, newTask.tags)
-		if (newTask?.belongTo) addNewTaskToGroup(newTask, newTask.belongTo)
+		if (newTask?.belongTo) await addNewTaskToGroup(newTask, newTask.belongTo)
 	} else if (operationType === 'delete') {
 		const { _id } = data.documentKey
 
@@ -49,7 +49,7 @@ TaskModel.watch().on('change', async (data) => {
 
 		deleteTaskFromUser(task._id, task.participants)
 		deleteTaskFromTag(task._id, task.tags)
-		if (task?.belongTo) deleteTaskFromGroup(task._id, task.belongTo)
+		if (task?.belongTo) await deleteTaskFromGroup(task._id, task.belongTo)
 	} else {
 	}
 })
