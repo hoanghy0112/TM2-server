@@ -45,11 +45,9 @@ TaskModel.watch().on('change', async (data) => {
 	} else if (operationType === 'delete') {
 		const { _id } = data.documentKey
 
-		const task = await TaskModel.findById(_id)
-
-		deleteTaskFromUser(task._id, task.participants)
-		deleteTaskFromTag(task._id, task.tags)
-		if (task?.belongTo) await deleteTaskFromGroup(task._id, task.belongTo)
+		deleteTaskFromUser(_id)
+		deleteTaskFromTag(_id)
+		if (task?.belongTo) deleteTaskFromGroup(_id)
 	} else {
 	}
 })

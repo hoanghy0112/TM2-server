@@ -35,32 +35,30 @@ export async function addNewTaskToGroup(newTask, groupID) {
 	console.log({ result, id: newTask._id })
 }
 
-export function deleteTaskFromUser(taskID, userIDs) {
-	userIDs.forEach(async (userID) => {
-		await UserModel.findByIdAndUpdate(userID, {
-			$pull: {
-				tasks: taskID,
-			},
-		})
-	})
-}
-
-export function deleteTaskFromTag(taskID, tagIDs) {
-	tagIDs.forEach(async (tagID) => {
-		await TagModel.findByIdAndUpdate(tagID, {
-			$pull: {
-				tasks: taskID,
-			},
-		})
-	})
-}
-
-export async function deleteTaskFromGroup(taskID, groupID) {
-	await GroupModel.findByIdAndUpdate(groupID, {
-		$pull: {
+export function deleteTaskFromUser(taskID) {
+	UserModel.updateMany(
+		{
 			tasks: taskID,
 		},
-	})
+		{
+			$pull: {
+				tasks: taskID,
+			},
+		},
+	)
+}
+
+export function deleteTaskFromGroup(taskID) {
+	GroupModel.updateOne(
+		{
+			tasks: taskID,
+		},
+		{
+			$pull: {
+				tasks: taskID,
+			},
+		},
+	)
 }
 
 export function updateTask(taskID, updatedFields) {

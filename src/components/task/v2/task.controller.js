@@ -108,7 +108,11 @@ async function socketUpdateBusyTime(task) {
 	console.log({ groupIDs })
 
 	groupIDs.forEach((groupID) => {
-		io.to(`busy:${groupID}`).emit('update-task', task)
+		io.to(`busy:${groupID}`).emit('update-task', {
+			_id: task._id,
+			from: task.time.from,
+			to: task.time.to,
+		})
 	})
 }
 
