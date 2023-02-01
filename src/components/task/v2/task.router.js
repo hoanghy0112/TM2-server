@@ -4,6 +4,8 @@ import {
 	httpCreateNewTask,
 	httpDeleteTaskByID,
 	httpUpdateTaskByID,
+	socketGetAllTaskOfUser,
+	socketGetTaskByID,
 } from './task.controller'
 
 const taskRouter = express.Router()
