@@ -1,12 +1,11 @@
 import io from '../../../../bin/socketServer'
-import { getUserInfo, getUserInfoByID } from '../../user/user.model'
+import { getUserInfoByID } from '../../user/user.model'
 import {
 	createNewTask,
 	deleteTaskByID,
 	getAllTaskOfUser,
 	getTaskByID,
 	updateTaskByID,
-	changeTaskDay,
 } from '../task.model'
 
 export async function socketGetAllTaskOfUser(socket, userID, from, to) {
@@ -41,7 +40,6 @@ export async function httpCreateNewTask(req, res) {
 	try {
 		const newTask = await createNewTask([userID], taskData)
 		socketSendNewTaskToParticipants(memberIDs, newTask)
-		// console.log({ memberIDs })
 		return res.status(200).send('Create successfully')
 	} catch (error) {
 		return res.status(500).send('Server error: ' + error.message)
@@ -71,6 +69,7 @@ export async function httpDeleteTaskByID(req, res) {
 	try {
 		const deletedTask = await deleteTaskByID(userID, taskID)
 		socketSendDeleteTask(taskID, deletedTask.participants)
+		console.log({ deletedTask })
 		return res.status(200).send('Remove  successfully')
 	} catch (error) {
 		if (error.code == 403) return res.status(403).send('Forbidden')
@@ -95,6 +94,7 @@ function socketSendUpdatedTask(task) {
 }
 
 function socketSendDeleteTask(taskID, userIDs) {
+	console.log({ userIDs })
 	userIDs.forEach((userID) => {
 		io.to(`tasks:${userID}`).emit('delete-task', taskID)
 	})
@@ -105,7 +105,6 @@ function socketSendDeleteTask(taskID, userIDs) {
 
 async function socketUpdateBusyTime(task) {
 	const groupIDs = await getAllGroupIDOfTask(task._id)
-	console.log({ groupIDs })
 
 	groupIDs.forEach((groupID) => {
 		io.to(`busy:${groupID}`).emit('update-task', {

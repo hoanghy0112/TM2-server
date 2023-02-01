@@ -40,7 +40,7 @@ TaskModel.watch().on('change', async (data) => {
 		const { _id } = data.documentKey
 
 		deleteTaskFromUser(_id)
-		if (task?.belongTo) deleteTaskFromGroup(_id)
+		deleteTaskFromGroup(_id)
 	} else {
 	}
 })

@@ -28,7 +28,6 @@ export function authorizeSocketMiddleware(socket, next) {
 				}
 				user = await createUserInfo(profile)
 			}
-			console.log({ user })
 
 			socket.user = user
 

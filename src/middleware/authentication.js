@@ -6,7 +6,6 @@ import { removeVietnameseTones } from '../utils/converter'
 
 export function authorizeRouteMiddleware(req, res, next) {
 	const [type, accessToken] = req.headers['authorization'].split(' ')
-	console.log({ accessToken })
 
 	getAuth(firebaseApp)
 		.verifyIdToken(accessToken)
@@ -30,7 +29,6 @@ export function authorizeRouteMiddleware(req, res, next) {
 					email: userProfile.email,
 				}
 				user = await createUserInfo(profile)
-				
 			}
 
 			req.user = user
@@ -38,7 +36,6 @@ export function authorizeRouteMiddleware(req, res, next) {
 			next()
 		})
 		.catch((error) => {
-			// Handle error
 			console.log({ error })
 			return res.status(401).send('Unauthoried')
 		})

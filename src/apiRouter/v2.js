@@ -22,8 +22,6 @@ export function socketHandlerV2(io) {
 	io.use(authorizeSocketMiddleware)
 
 	io.on('connection', (socket) => {
-		console.log('New connection')
-
 		const { user } = socket
 
 		setupUserSocketListener(socket, user)
