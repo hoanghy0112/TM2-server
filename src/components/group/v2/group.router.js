@@ -11,6 +11,7 @@ import {
 	httpInviteJoinGroup,
 	httpRemoveUserFromGroup,
 	httpUpdateGroup,
+	socketGetAllBusyTimeOfGroup,
 	socketGetGroupByID,
 } from './group.controller'
 
@@ -44,6 +45,9 @@ groupRouter.delete('/:groupID', authorizeRouteMiddleware, httpDeleteGroupByID)
 
 export async function setupGroupSocketListener(socket, user) {
 	socket.on('group-info', (groupID) => socketGetGroupByID(socket, groupID))
+	socket.on('get-busy', (groupID, from, to) =>
+		socketGetAllBusyTimeOfGroup(socket, groupID, from, to),
+	)
 }
 
 export default groupRouter

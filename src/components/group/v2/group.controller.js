@@ -54,6 +54,18 @@ export async function httpGetAllBusyTimeOfGroup(req, res) {
 	}
 }
 
+export async function socketGetAllBusyTimeOfGroup(socket, groupID, from, to) {
+	socket.join(`busy:${groupID}`)
+	try {
+		const busyTimes = await getAllBusyTimeOfGroup(groupID, '', from, to)
+		io.to(`busy:${groupID}`).emit('busy', busyTimes)
+		// return res.status(200).json(busyTimes)
+	} catch (error) {
+		// return res.status(500).send('Server error: ' + error.message)
+		io.to(`busy:${groupID}`).emit('error', error)
+	}
+}
+
 export async function httpInviteJoinGroup(req, res) {
 	const adminID = req.user._id
 	const userIDs = req.body.users
@@ -171,7 +183,7 @@ export async function httpUpdateGroup(req, res) {
 		const newGroup = await updateGroupByID(groupID, groupData)
 		// console.log({ newGroup })
 		// const memberIDs = [newGroup.users, newGroup.admin]
-		updateGroupInfoToSocketByID(groupID)
+		updateGroupInfoToSocketByID(groupID, newGroup)
 
 		return res.status(200).send('Update Successfully')
 	} catch (error) {
@@ -211,11 +223,11 @@ export function updateGroupInfoToSocket(group) {
 	io.to(`group:${groupID}`).emit('group-info', group)
 }
 
-export async function updateGroupInfoToSocketByID(groupID) {
-	const group = await getGroupByID(groupID)
+export async function updateGroupInfoToSocketByID(groupID, group) {
+	// const group = await getGroupByID(groupID)
 	io.to(`group:${groupID}`).emit('group-info', group)
 }
 
-export function updateGroupBusyTimeToSocket(newBusyTime) {
-	io.to(`group-busy:${groupID}`).emit('group-busy', newBusyTime)
-}
+// export function updateGroupBusyTimeToSocket(newBusyTime) {
+// 	io.to(`group-busy:${groupID}`).emit('group-busy', newBusyTime)
+// }

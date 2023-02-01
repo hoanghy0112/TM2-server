@@ -1,7 +1,6 @@
-import GroupModel from './group.mongo'
-import UserModel from '../user/user.mongo'
 import TaskModel from '../task/task.mongo'
-import GroupTaskModel from '../groupTask/groupTask.mongo'
+import UserModel from '../user/user.mongo'
+import GroupModel from './group.mongo'
 
 import {
 	createNotificationForInviteToGroup,
@@ -54,7 +53,7 @@ export async function getAllBusyTimeOfGroup(groupID, userID, from, to) {
 		},
 	})
 
-	const timeOfTasks = tasks.map((task) => task.time)
+	const timeOfTasks = tasks.map((task) => ({ ...task.time, _id: task._id }))
 
 	return timeOfTasks
 }

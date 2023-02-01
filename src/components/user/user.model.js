@@ -4,7 +4,7 @@ import UserModel from './user.mongo'
 
 export async function getUserInfo(userID) {
 	const userInfo = await UserModel.findOne({ userID }).select(
-		'_id userID givenName familyName email photo',
+		'_id userID givenName familyName email photo groups',
 	)
 	return userInfo
 }

@@ -1,4 +1,5 @@
 import io from '../../../../bin/socketServer'
+import { getUserInfo } from '../../user/user.model'
 import {
 	createNewTask,
 	deleteTaskByID,
@@ -78,12 +79,14 @@ export async function httpDeleteTaskByID(req, res) {
 
 function socketSendNewTaskToParticipants(userIDs, task) {
 	userIDs.forEach((userID) => {
-		io.to(`tasks:${userID}`).emit('new-task', task)
+		io.to(`tasks:${userID}`).emit('task', task)
 	})
+	socketUpdateBusyTime(task)
 }
 
 function socketSendUpdatedTask(task) {
 	io.to(`task:${task._id}`).emit('task', task)
+	socketUpdateBusyTime(task)
 }
 
 function socketSendDeleteTask(taskID, userIDs) {
@@ -92,4 +95,37 @@ function socketSendDeleteTask(taskID, userIDs) {
 	})
 
 	io.to(`task:${taskID}`).emit('delete-task', taskID)
+	socketDeleteBusyTime(taskID)
+}
+
+async function socketUpdateBusyTime(task) {
+	const groupIDs = await getAllGroupIDOfTask(task._id)
+
+	groupIDs.forEach((groupID) => {
+		io.to(`busy:${groupID}`).emit('update-task', task)
+	})
+}
+
+async function socketDeleteBusyTime(taskID) {
+	const groupIDs = await getAllGroupIDOfTask(taskID)
+
+	groupIDs.forEach((groupID) => {
+		io.to(`busy:${groupID}`).emit('delete-task', taskID)
+	})
+}
+
+async function getAllGroupIDOfTask(taskID) {
+	const task = await getTaskByID(taskID)
+
+	const belongTo = task?.belongTo
+	const memberIDs = [task.admin, ...task.participants]
+	const groupIDs = new Set([belongTo])
+	await Promise.all(
+		memberIDs.map(async (memberID) => {
+			const memberInfo = await getUserInfo(memberID)
+			memberInfo.groups?.forEach((groupID) => groupIDs.add(groupID))
+		}),
+	)
+
+	return groupIDs
 }
