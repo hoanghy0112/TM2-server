@@ -1,13 +1,8 @@
 import mongoose from 'mongoose'
-import UserModel from '../user/user.mongo'
-import TagModel from '../tag/tag.mongo'
-import GroupModel from '../group/group.mongo'
 import {
 	addNewTaskToGroup,
-	addNewTaskToTag,
 	addNewTaskToUser,
 	deleteTaskFromGroup,
-	deleteTaskFromTag,
 	deleteTaskFromUser,
 } from './task.helper'
 
@@ -40,13 +35,11 @@ TaskModel.watch().on('change', async (data) => {
 		const newTask = data.fullDocument
 
 		addNewTaskToUser(newTask, newTask.participants)
-		addNewTaskToTag(newTask, newTask.tags)
 		if (newTask?.belongTo) await addNewTaskToGroup(newTask, newTask.belongTo)
 	} else if (operationType === 'delete') {
 		const { _id } = data.documentKey
 
 		deleteTaskFromUser(_id)
-		deleteTaskFromTag(_id)
 		if (task?.belongTo) deleteTaskFromGroup(_id)
 	} else {
 	}

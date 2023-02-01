@@ -12,16 +12,6 @@ export function addNewTaskToUser(newTask, userIDs) {
 	})
 }
 
-export function addNewTaskToTag(newTask, tagIDs) {
-	tagIDs.forEach(async (tagID) => {
-		await TagModel.findByIdAndUpdate(tagID, {
-			$addToSet: {
-				tasks: newTask._id,
-			},
-		})
-	})
-}
-
 export async function addNewTaskToGroup(newTask, groupID) {
 	const result = await GroupModel.findByIdAndUpdate(
 		groupID,
