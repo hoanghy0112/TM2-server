@@ -63,7 +63,7 @@ export async function httpUpdateTaskByID(req, res) {
 		)
 
 		deletedUsers.forEach((userID) => {
-			io.to(`tasks:${userID}`).emit('update-task', newTask)
+			io.to(`tasks:${userID}`).emit('delete-task', taskID)
 		})
 
 		socketSendUpdatedTask(newTask)
