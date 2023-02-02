@@ -38,32 +38,32 @@ export async function getAllTaskOfUser(userID, from, to) {
 export async function updateTaskByID(userID, taskID, taskData) {
 	const allTaskOfUser = await getAllTaskOfUser(userID)
 
-	if (allTaskOfUser.find((task) => task._id == taskID)) {
-		const oldTask = await TaskModel.findById(taskID)
-		const newTask = await TaskModel.findByIdAndUpdate(taskID, taskData, {
-			new: true,
-		})
-		return { oldTask, newTask }
-	} else {
-		throw {
-			code: 403,
-		}
-	}
+	const oldTask = await TaskModel.findById(taskID)
+	const newTask = await TaskModel.findByIdAndUpdate(taskID, taskData, {
+		new: true,
+	})
+	return { oldTask, newTask }
+	// if (allTaskOfUser.find((task) => task._id == taskID)) {
+	// } else {
+	// 	throw {
+	// 		code: 403,
+	// 	}
+	// }
 }
 
 export async function deleteTaskByID(userID, taskID) {
 	const allTasksOfUser = await getAllTaskOfUser(userID)
 
-	if (allTasksOfUser.find((task) => task._id == taskID)) {
-		const task = await TaskModel.findById(taskID)
-		await TaskModel.findByIdAndDelete(taskID)
+	// if (allTasksOfUser.find((task) => task._id == taskID)) {
+	const task = await TaskModel.findById(taskID)
+	await TaskModel.findByIdAndDelete(taskID)
 
-		return task
-	} else {
-		throw {
-			code: 403,
-		}
-	}
+	return task
+	// } else {
+	// 	throw {
+	// 		code: 403,
+	// 	}
+	// }
 }
 
 export async function createNewTask(userIDs, task) {

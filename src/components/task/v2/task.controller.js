@@ -86,7 +86,7 @@ export async function httpDeleteTaskByID(req, res) {
 		const deletedTask = await deleteTaskByID(userID, taskID)
 		const groupID = deletedTask?.belongTo
 		if (groupID)
-			io.to(`group-tasks:${groupID}`).emit('update-task', deletedTask._id)
+			io.to(`group-tasks:${groupID}`).emit('delete-task', deletedTask._id)
 		socketSendDeleteTask(taskID, deletedTask.participants)
 		return res.status(200).send('Remove  successfully')
 	} catch (error) {

@@ -64,6 +64,7 @@ export async function httpAcceptJoinGroup(req, res) {
 
 		const group = await getGroupByID(groupID)
 		updateGroupInfoToSocketByID(groupID, group)
+		io.to(`busy:${groupID}`).emit('new-user')
 
 		return res.status(200).send('You has joined to group')
 	} catch (error) {

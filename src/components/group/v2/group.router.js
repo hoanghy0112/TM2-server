@@ -13,6 +13,7 @@ import {
 	httpUpdateGroup,
 	socketGetAllBusyTimeOfGroup,
 	socketGetGroupByID,
+	socketGetGroupTasks,
 } from './group.controller'
 
 const groupRouter = express.Router()
@@ -47,6 +48,9 @@ export async function setupGroupSocketListener(socket, user) {
 	socket.on('group-info', (groupID) => socketGetGroupByID(socket, groupID))
 	socket.on('get-busy', (groupID, from, to) =>
 		socketGetAllBusyTimeOfGroup(socket, groupID, from, to),
+	)
+	socket.on('get-group-tasks', (groupID, from, to) =>
+		socketGetGroupTasks(socket, groupID, from, to),
 	)
 }
 

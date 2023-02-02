@@ -17,9 +17,12 @@ export async function socketGetGroupByID(socket, groupID) {
 	if (!groupID) return
 
 	const group = await getGroupByID(groupID)
+	console.log({ groupID, group })
 
-	socket.join(`group:${groupID}`)
-	updateGroupInfoToSocket(group)
+	if (group) {
+		socket.join(`group:${groupID}`)
+		updateGroupInfoToSocket(group)
+	}
 }
 
 export async function socketGetGroupTasks(socket, groupID, from, to) {
@@ -27,9 +30,10 @@ export async function socketGetGroupTasks(socket, groupID, from, to) {
 
 	try {
 		const tasks = await getAllGroupTasksOfGroup(groupID, from, to)
-		io.to(`group-tasks:${groupID}`).emit('tasks', tasks)
+		io.to(`group-tasks:${groupID}`).emit('group-tasks', tasks)
 	} catch (error) {
-		io.to(`group-tasks:${groupID}`).emit('tasks', tasks)
+		console.log({ getGroupTasksError: error })
+		io.to(`group-tasks:${groupID}`).emit('error', error)
 	}
 }
 
@@ -72,6 +76,7 @@ export async function socketGetAllBusyTimeOfGroup(socket, groupID, from, to) {
 		const busyTimes = await getAllBusyTimeOfGroup(groupID, '', from, to)
 		io.to(`busy:${groupID}`).emit('busy', busyTimes)
 	} catch (error) {
+		console.log({ getGroupBusyError: error })
 		io.to(`busy:${groupID}`).emit('error', error)
 	}
 }
@@ -234,10 +239,5 @@ export function updateGroupInfoToSocket(group) {
 }
 
 export async function updateGroupInfoToSocketByID(groupID, group) {
-	// const group = await getGroupByID(groupID)
 	io.to(`group:${groupID}`).emit('group-info', group)
 }
-
-// export function updateGroupBusyTimeToSocket(newBusyTime) {
-// 	io.to(`group-busy:${groupID}`).emit('group-busy', newBusyTime)
-// }
