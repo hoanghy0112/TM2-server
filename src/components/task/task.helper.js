@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import GroupModel from '../group/group.mongo'
 import TagModel from '../tag/tag.mongo'
 import UserModel from '../user/user.mongo'
@@ -22,13 +23,14 @@ export async function addNewTaskToGroup(newTask, groupID) {
 		},
 		{ new: true },
 	)
-	console.log({ result, id: newTask._id })
 }
 
-export function deleteTaskFromUser(taskID) {
-	UserModel.updateMany(
+export async function deleteTaskFromUser(taskID) {
+	const result = await UserModel.updateMany(
 		{
-			tasks: taskID,
+			tasks: {
+				$all: [mongoose.Types.ObjectId(taskID)],
+			},
 		},
 		{
 			$pull: {
@@ -38,10 +40,12 @@ export function deleteTaskFromUser(taskID) {
 	)
 }
 
-export function deleteTaskFromGroup(taskID) {
-	GroupModel.updateOne(
+export async function deleteTaskFromGroup(taskID) {
+	await GroupModel.updateOne(
 		{
-			tasks: taskID,
+			tasks: {
+				$all: [mongoose.Types.ObjectId(taskID)],
+			},
 		},
 		{
 			$pull: {
@@ -51,8 +55,8 @@ export function deleteTaskFromGroup(taskID) {
 	)
 }
 
-export function updateParticipantsOfTask(taskID, userIDs) {
-	UserModel.updateMany(
+export async function updateParticipantsOfTask(taskID, userIDs) {
+	await UserModel.updateMany(
 		{
 			_id: {
 				$nin: userIDs,
@@ -65,7 +69,7 @@ export function updateParticipantsOfTask(taskID, userIDs) {
 		},
 	)
 
-	UserModel.updateMany(
+	await UserModel.updateMany(
 		{
 			_id: {
 				$in: userIDs,
