@@ -39,7 +39,11 @@ export async function updateTaskByID(userID, taskID, taskData) {
 	const allTaskOfUser = await getAllTaskOfUser(userID)
 
 	if (allTaskOfUser.find((task) => task._id == taskID)) {
-		return await TaskModel.findByIdAndUpdate(taskID, taskData, { new: true })
+		const oldTask = await TaskModel.findById(taskID)
+		const newTask = await TaskModel.findByIdAndUpdate(taskID, taskData, {
+			new: true,
+		})
+		return { oldTask, newTask }
 	} else {
 		throw {
 			code: 403,

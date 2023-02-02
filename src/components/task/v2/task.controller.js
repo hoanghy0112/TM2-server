@@ -53,7 +53,19 @@ export async function httpUpdateTaskByID(req, res) {
 
 	if (!taskID || !taskData) return res.status(400).send('Bad request')
 	try {
-		const newTask = await updateTaskByID(userID, taskID, taskData)
+		const { oldTask, newTask } = await updateTaskByID(
+			userID,
+			taskID,
+			taskData,
+		)
+		const deletedUsers = oldTask.participants.filter(
+			(id) => !newTask.participants.includes(id),
+		)
+
+		deletedUsers.forEach((userID) => {
+			io.to(`tasks:${userID}`).emit('update-task', newTask)
+		})
+
 		socketSendUpdatedTask(newTask)
 		return res.status(200).send('Update successfully')
 	} catch (error) {
@@ -69,7 +81,6 @@ export async function httpDeleteTaskByID(req, res) {
 	try {
 		const deletedTask = await deleteTaskByID(userID, taskID)
 		socketSendDeleteTask(taskID, deletedTask.participants)
-		console.log({ deletedTask })
 		return res.status(200).send('Remove  successfully')
 	} catch (error) {
 		if (error.code == 403) return res.status(403).send('Forbidden')
@@ -94,7 +105,6 @@ function socketSendUpdatedTask(task) {
 }
 
 function socketSendDeleteTask(taskID, userIDs) {
-	console.log({ userIDs })
 	userIDs.forEach((userID) => {
 		io.to(`tasks:${userID}`).emit('delete-task', taskID)
 	})

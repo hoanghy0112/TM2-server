@@ -4,6 +4,7 @@ import {
 	addNewTaskToUser,
 	deleteTaskFromGroup,
 	deleteTaskFromUser,
+	updateParticipantsOfTask,
 } from './task.helper'
 
 const TaskSchema = new mongoose.Schema({
@@ -42,6 +43,12 @@ TaskModel.watch().on('change', async (data) => {
 		deleteTaskFromUser(_id)
 		deleteTaskFromGroup(_id)
 	} else {
+		const { _id } = data.documentKey
+		const { updatedFields } = data.updateDescription
+
+		const { participants } = updatedFields
+
+		if (participants) updateParticipantsOfTask(_id, participants)
 	}
 })
 

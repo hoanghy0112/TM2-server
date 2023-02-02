@@ -51,12 +51,30 @@ export function deleteTaskFromGroup(taskID) {
 	)
 }
 
-export function updateTask(taskID, updatedFields) {
-	const fields = Array.from(Object.entries(updatedFields))
+export function updateParticipantsOfTask(taskID, userIDs) {
+	UserModel.updateMany(
+		{
+			_id: {
+				$nin: userIDs,
+			},
+		},
+		{
+			$pull: {
+				tasks: taskID,
+			},
+		},
+	)
 
-	const tagRegEx = /^tags.\d+$/
-
-	// fields.forEach(([key, value]) => {
-	//    if (tagRegEx.test(key))
-	// })
+	UserModel.updateMany(
+		{
+			_id: {
+				$in: userIDs,
+			},
+		},
+		{
+			$addToSet: {
+				tasks: taskID,
+			},
+		},
+	)
 }
