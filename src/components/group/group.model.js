@@ -74,6 +74,35 @@ export async function getAllGroupsOfUser(userID) {
 		.reverse()
 }
 
+export async function getAllGroupTasksOfGroup(groupID, from, to) {
+	const group = await GroupModel.findById(groupID)
+	const populatedGroup = await group.populate('tasks')
+
+	const now = new Date()
+	const defaultFrom = new Date(
+		now.getFullYear(),
+		now.getMonth(),
+		now.getDate() - now.getDay() + 1,
+		0,
+		0,
+		0,
+	)
+	const defaultTo = new Date(
+		now.getFullYear(),
+		now.getMonth(),
+		defaultFrom.getDate() + 7,
+		0,
+		0,
+		0,
+	)
+
+	return populatedGroup.tasks.filter(
+		({ time }) =>
+			new Date(from || defaultFrom) < new Date(time.from) &&
+			new Date(to || defaultTo) > new Date(time.from),
+	)
+}
+
 export async function addUserToGroup(userID, groupID) {
 	await GroupModel.findByIdAndUpdate(groupID, {
 		$push: {

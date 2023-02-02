@@ -10,6 +10,7 @@ import {
 	getAllBusyTimeOfGroup,
 	inviteJoinGroup,
 	acceptUserToJoinGroup,
+	getAllGroupTasksOfGroup,
 } from '../group.model'
 
 export async function socketGetGroupByID(socket, groupID) {
@@ -19,6 +20,17 @@ export async function socketGetGroupByID(socket, groupID) {
 
 	socket.join(`group:${groupID}`)
 	updateGroupInfoToSocket(group)
+}
+
+export async function socketGetGroupTasks(socket, groupID, from, to) {
+	socket.join(`group-tasks:${groupID}`)
+
+	try {
+		const tasks = await getAllGroupTasksOfGroup(groupID, from, to)
+		io.to(`group-tasks:${groupID}`).emit('tasks', tasks)
+	} catch (error) {
+		io.to(`group-tasks:${groupID}`).emit('tasks', tasks)
+	}
 }
 
 export async function httpCreateNewGroup(req, res) {

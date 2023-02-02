@@ -69,9 +69,11 @@ export async function deleteTaskByID(userID, taskID) {
 export async function createNewTask(userIDs, task) {
 	const newTask = await TaskModel.create({
 		...task,
-		participants: [...userIDs, ...(task?.participants || [])],
+		participants: [
+			...(task?.belongTo ? [] : userIDs),
+			...(task?.participants || []),
+		],
 	})
-	// console.log({ newTask })
 	return newTask
 }
 

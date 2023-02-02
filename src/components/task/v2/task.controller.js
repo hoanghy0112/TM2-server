@@ -34,11 +34,13 @@ export async function httpCreateNewTask(req, res) {
 	const taskData = req.body
 	const participants = taskData.participants || []
 	const userID = req.user._id
+	const groupID = taskData?.belongTo
 	const memberIDs = [userID, ...participants]
 
 	if (!userID || !taskData) return res.status(400).send('Bad request')
 	try {
 		const newTask = await createNewTask([userID], taskData)
+		if (groupID) io.to(`group-tasks:${groupID}`).emit('update-task', newTask)
 		socketSendNewTaskToParticipants(memberIDs, newTask)
 		return res.status(200).send('Create successfully')
 	} catch (error) {
@@ -66,6 +68,8 @@ export async function httpUpdateTaskByID(req, res) {
 			io.to(`tasks:${userID}`).emit('delete-task', taskID)
 		})
 
+		const groupID = newTask?.belongTo
+		if (groupID) io.to(`group-tasks:${groupID}`).emit('update-task', newTask)
 		socketSendUpdatedTask(newTask)
 		return res.status(200).send('Update successfully')
 	} catch (error) {
@@ -80,6 +84,9 @@ export async function httpDeleteTaskByID(req, res) {
 
 	try {
 		const deletedTask = await deleteTaskByID(userID, taskID)
+		const groupID = deletedTask?.belongTo
+		if (groupID)
+			io.to(`group-tasks:${groupID}`).emit('update-task', deletedTask._id)
 		socketSendDeleteTask(taskID, deletedTask.participants)
 		return res.status(200).send('Remove  successfully')
 	} catch (error) {

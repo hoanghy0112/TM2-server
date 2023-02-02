@@ -14,7 +14,6 @@ const GroupSchema = new mongoose.Schema({
 		ref: 'User',
 		required: true,
 	},
-	// groupTasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'groupTask' }],
 	tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
 	requests: [
 		{
