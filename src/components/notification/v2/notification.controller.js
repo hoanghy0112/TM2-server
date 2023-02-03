@@ -9,7 +9,7 @@ export async function addNewNotification(notification) {
 	const { userIDs } = notification
 
 	try {
-		createNewNotification(notification)
+		await createNewNotification(notification)
 
 		userIDs.forEach((userID) => {
 			io.to(`notification:${userID}`).emit('new-notification', notification)

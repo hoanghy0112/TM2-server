@@ -14,6 +14,11 @@ const NotificationSchema = new mongoose.Schema({
 			ref: 'User',
 		},
 	],
+	taskID: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Task',
+		required: false,
+	},
 	groupID: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Group',

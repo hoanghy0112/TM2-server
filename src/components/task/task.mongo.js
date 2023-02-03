@@ -24,6 +24,22 @@ const TaskSchema = new mongoose.Schema({
 	},
 	tags: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tag' }],
 	participants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+	responses: [
+		{
+			userID: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+			message: String,
+			state: {
+				type: String,
+				enum: ['approve', 'decline', 'hover', 'no-response'],
+				default: 'no-response',
+			},
+		},
+	],
+	admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+	permission: {
+		view: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+		edit: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+	},
 })
 
 const TaskModel = mongoose.model('Task', TaskSchema)

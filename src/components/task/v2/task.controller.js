@@ -1,10 +1,12 @@
 import io from '../../../../bin/socketServer'
+import { createNotificationForInviteToTask } from '../../notification/notification.model'
 import { getUserInfoByID } from '../../user/user.model'
 import {
 	createNewTask,
 	deleteTaskByID,
 	getAllTaskOfUser,
 	getTaskByID,
+	responseTask,
 	updateTaskByID,
 } from '../task.model'
 
@@ -19,11 +21,11 @@ export async function socketGetAllTaskOfUser(socket, userID, from, to) {
 	}
 }
 
-export async function socketGetTaskByID(socket, taskID) {
+export async function socketGetTaskByID(socket, taskID, userID) {
 	socket.join(`task:${taskID}`)
 
 	try {
-		const task = await getTaskByID(taskID)
+		const task = await getTaskByID(taskID, userID)
 		io.to(`task:${taskID}`).emit('task', task)
 	} catch (error) {
 		io.to(`task:${taskID}`).emit('error', error)
@@ -39,8 +41,13 @@ export async function httpCreateNewTask(req, res) {
 
 	if (!userID || !taskData) return res.status(400).send('Bad request')
 	try {
-		const newTask = await createNewTask([userID], taskData)
+		const newTask = await createNewTask(userID, taskData)
 		if (groupID) io.to(`group-tasks:${groupID}`).emit('update-task', newTask)
+
+		participants.forEach((userID) => {
+			createNotificationForInviteToTask(newTask._id, userID)
+		})
+
 		socketSendNewTaskToParticipants(memberIDs, newTask)
 		return res.status(200).send('Create successfully')
 	} catch (error) {
@@ -68,6 +75,14 @@ export async function httpUpdateTaskByID(req, res) {
 			io.to(`tasks:${userID}`).emit('delete-task', taskID)
 		})
 
+		const newUsers = newTask.participants.filter(
+			(id) => !oldTask.participants.includes(id),
+		)
+
+		newUsers.forEach((userID) => {
+			createNotificationForInviteToTask(taskID, userID)
+		})
+
 		const groupID = newTask?.belongTo
 		if (groupID) io.to(`group-tasks:${groupID}`).emit('update-task', newTask)
 		socketSendUpdatedTask(newTask)
@@ -89,6 +104,21 @@ export async function httpDeleteTaskByID(req, res) {
 			io.to(`group-tasks:${groupID}`).emit('delete-task', deletedTask._id)
 		socketSendDeleteTask(taskID, deletedTask.participants)
 		return res.status(200).send('Remove  successfully')
+	} catch (error) {
+		if (error.code == 403) return res.status(403).send('Forbidden')
+		return res.status(500).send('Server error: ' + error.message)
+	}
+}
+
+export async function httpResponseTaskByID(req, res) {
+	const taskID = req.params.taskID
+	const userID = req.user._id
+	const { message, state } = req.body || {}
+
+	try {
+		const newTask = await responseTask(taskID, userID, message, state)
+		socketSendUpdatedTask(newTask)
+		return res.status(200).send('Your request has been accepted')
 	} catch (error) {
 		if (error.code == 403) return res.status(403).send('Forbidden')
 		return res.status(500).send('Server error: ' + error.message)
@@ -140,8 +170,8 @@ async function socketDeleteBusyTime(taskID) {
 	})
 }
 
-async function getAllGroupIDOfTask(taskID) {
-	const task = await getTaskByID(taskID)
+async function getAllGroupIDOfTask(taskID, userID) {
+	const task = await getTaskByID(taskID, null)
 
 	const belongTo = task?.belongTo
 	const memberIDs = task.participants

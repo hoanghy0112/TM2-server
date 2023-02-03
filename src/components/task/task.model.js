@@ -2,8 +2,35 @@ import TaskModel from './task.mongo'
 import UserModel from '../user/user.mongo'
 import TagModel from '../tag/tag.mongo'
 
-export async function getTaskByID(taskID) {
-	return await TaskModel.findById(taskID)
+export async function getTaskByID(taskID, userID) {
+	const task = await TaskModel.findOne({
+		$and: [
+			{ _id: taskID },
+			userID
+				? {
+						$or: [
+							{
+								'permission.view': {
+									$all: [userID],
+								},
+							},
+							{
+								participants: {
+									$all: [userID],
+								},
+							},
+						],
+				  }
+				: {},
+		],
+	})
+	if (!task) {
+		throw {
+			code: 403,
+		}
+	} else {
+		return task
+	}
 }
 
 export async function getAllTaskOfUser(userID, from, to) {
@@ -36,43 +63,121 @@ export async function getAllTaskOfUser(userID, from, to) {
 }
 
 export async function updateTaskByID(userID, taskID, taskData) {
-	const allTaskOfUser = await getAllTaskOfUser(userID)
-
 	const oldTask = await TaskModel.findById(taskID)
-	const newTask = await TaskModel.findByIdAndUpdate(taskID, taskData, {
-		new: true,
-	})
+	const newTask = await TaskModel.findOneAndUpdate(
+		{
+			$and: [
+				{ _id: taskID },
+				{
+					'permission.edit': {
+						$all: [userID],
+					},
+				},
+			],
+		},
+		taskData,
+		{
+			new: true,
+		},
+	)
+	if (!newTask) {
+		throw {
+			code: 403,
+		}
+	}
 	return { oldTask, newTask }
-	// if (allTaskOfUser.find((task) => task._id == taskID)) {
-	// } else {
-	// 	throw {
-	// 		code: 403,
-	// 	}
-	// }
 }
 
 export async function deleteTaskByID(userID, taskID) {
-	const allTasksOfUser = await getAllTaskOfUser(userID)
-
-	// if (allTasksOfUser.find((task) => task._id == taskID)) {
 	const task = await TaskModel.findById(taskID)
-	await TaskModel.findByIdAndDelete(taskID)
+	const deletedTask = await TaskModel.findOneAndDelete({
+		$and: [
+			{ _id: taskID },
+			{
+				admin: {
+					$all: [userID],
+				},
+			},
+		],
+	})
+
+	if (!deletedTask) {
+		throw {
+			code: 403,
+		}
+	}
 
 	return task
-	// } else {
-	// 	throw {
-	// 		code: 403,
-	// 	}
-	// }
 }
 
-export async function createNewTask(userIDs, task) {
+export async function responseTask(taskID, userID, message, state) {
+	const oldTask = await TaskModel.findOneAndUpdate(
+		{
+			$and: [
+				{ _id: taskID },
+				{
+					participants: {
+						$all: [userID],
+					},
+				},
+				{
+					'responses.userID': { $ne: userID },
+				},
+			],
+		},
+		{
+			$push: {
+				responses: {
+					userID,
+					message,
+					state,
+				},
+			},
+		},
+	)
+	const task = await TaskModel.findOneAndUpdate(
+		{
+			$and: [
+				{ _id: taskID },
+				{
+					participants: {
+						$all: [userID],
+					},
+				},
+				{
+					'responses.userID': userID,
+				},
+			],
+		},
+		{
+			$set: {
+				'responses.$.message': message,
+				'responses.$.state': state,
+			},
+		},
+		{ new: true },
+	)
+	if (!task) {
+		throw {
+			code: 403,
+		}
+	} else {
+		return task
+	}
+}
+
+export async function createNewTask(userID, task) {
 	const newTask = await TaskModel.create({
 		...task,
 		participants: [
-			...(task?.belongTo ? [] : userIDs),
+			...(task?.belongTo ? [] : [userID]),
 			...(task?.participants || []),
 		],
+		admin: userID,
+		permission: {
+			view: [userID],
+			edit: [userID],
+		},
 	})
 	return newTask
 }

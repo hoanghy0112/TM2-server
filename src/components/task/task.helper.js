@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import GroupModel from '../group/group.mongo'
 import TagModel from '../tag/tag.mongo'
 import UserModel from '../user/user.mongo'
+import TaskModel from './task.mongo'
 
 export function addNewTaskToUser(newTask, userIDs) {
 	userIDs.forEach(async (userID) => {
@@ -82,3 +83,24 @@ export async function updateParticipantsOfTask(taskID, userIDs) {
 		},
 	)
 }
+
+// export async function updateParticipantsToResponse(taskID, userIDs) {
+// 	await TaskModel.findByIdAndUpdate(taskID, {
+// 		$set: {
+// 			tasks: taskID,
+// 		},
+// 	})
+
+// 	await UserModel.updateMany(
+// 		{
+// 			_id: {
+// 				$in: userIDs,
+// 			},
+// 		},
+// 		{
+// 			$addToSet: {
+// 				tasks: taskID,
+// 			},
+// 		},
+// 	)
+// }

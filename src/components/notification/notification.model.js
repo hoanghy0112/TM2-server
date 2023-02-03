@@ -129,6 +129,27 @@ export async function createNotificationForJoinAndOutGroup(
 	})
 }
 
+export async function createNotificationForInviteToTask(taskID, userID) {
+	const user = await UserModel.findById(userID)
+
+	const notification = await createNewNotification({
+		content: `Bạn vừa được thêm vào một task mới`,
+		thumbnail: user.photo,
+		belongTo: userID,
+		time: new Date(),
+		taskID,
+		type: 'invite-task',
+	})
+
+	notifyUser(userID, notification)
+
+	await UserModel.findByIdAndUpdate(userID, {
+		$push: {
+			notifications: notification._id,
+		},
+	})
+}
+
 export async function getAllNotificationsOfUser(userID) {
 	return await NotificationModel.find({ belongTo: userID }).sort({ time: -1 })
 }
