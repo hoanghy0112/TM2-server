@@ -171,6 +171,7 @@ export async function createNewNotification({
 	groupID,
 	time,
 	url = '',
+	taskID,
 	type,
 }) {
 	return await NotificationModel.create({
@@ -180,6 +181,7 @@ export async function createNewNotification({
 		userIDs,
 		groupID,
 		isRead: false,
+		taskID,
 		time,
 		url,
 		type,
