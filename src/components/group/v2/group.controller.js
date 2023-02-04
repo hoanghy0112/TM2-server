@@ -16,12 +16,15 @@ import {
 export async function socketGetGroupByID(socket, groupID) {
 	if (!groupID) return
 
-	const group = await getGroupByID(groupID)
-	console.log({ groupID, group })
+	try {
+		const group = await getGroupByID(groupID)
 
-	if (group) {
-		socket.join(`group:${groupID}`)
-		updateGroupInfoToSocket(group)
+		if (group) {
+			socket.join(`group:${groupID}`)
+			updateGroupInfoToSocket(group)
+		}
+	} catch (error) {
+		io.to(`group:${groupID}`).emit('error', error)
 	}
 }
 
