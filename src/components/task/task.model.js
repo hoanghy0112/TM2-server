@@ -1,6 +1,7 @@
 import TaskModel from './task.mongo'
 import UserModel from '../user/user.mongo'
 import TagModel from '../tag/tag.mongo'
+import { createNotificationWhenReplyToUserRequest } from '../notification/notification.model'
 
 export async function getTaskByID(taskID, userID) {
 	const task = await TaskModel.findOne({
@@ -197,6 +198,7 @@ export async function responseUserRequestOfTask(
 			code: 403,
 		}
 	} else {
+		await createNotificationWhenReplyToUserRequest(taskID, participantID)
 		return task
 	}
 }
