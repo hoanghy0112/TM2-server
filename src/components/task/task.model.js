@@ -135,6 +135,7 @@ export async function responseTask(taskID, userID, message, state) {
 			},
 		},
 	)
+
 	const task = await TaskModel.findOneAndUpdate(
 		{
 			$and: [
@@ -153,6 +154,40 @@ export async function responseTask(taskID, userID, message, state) {
 			$set: {
 				'responses.$.message': message,
 				'responses.$.state': state,
+			},
+		},
+		{ new: true },
+	)
+	if (!task) {
+		throw {
+			code: 403,
+		}
+	} else {
+		return task
+	}
+}
+
+export async function responseUserRequestOfTask(
+	taskID,
+	userID,
+	participantID,
+	state,
+) {
+	const task = await TaskModel.findOneAndUpdate(
+		{
+			$and: [
+				{ _id: taskID },
+				{
+					admin: userID,
+				},
+				{
+					'responses.userID': participantID,
+				},
+			],
+		},
+		{
+			$set: {
+				'responses.$.adminState': state,
 			},
 		},
 		{ new: true },

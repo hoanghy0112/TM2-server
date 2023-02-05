@@ -79,6 +79,28 @@ export async function createNotificationForInviteToGroup(userID, groupID) {
 	})
 }
 
+export async function createNotificationForRemoveFromGroup(userID, groupID) {
+	const group = await GroupModel.findById(groupID)
+	const admin = await UserModel.findById(String(group.admin))
+
+	const notification = await createNewNotification({
+		content: `${admin.familyName} ${admin.givenName} đã đưa bạn ra khỏi nhóm ${group.name}`,
+		thumbnail: admin.photo,
+		belongTo: userID,
+		time: new Date(),
+		groupID,
+		type: 'group-remove-user',
+	})
+
+	notifyUser(userID, notification)
+
+	await UserModel.findByIdAndUpdate(userID, {
+		$push: {
+			notifications: notification._id,
+		},
+	})
+}
+
 export async function createNotificationForJoinGroup(userID, groupID) {
 	const group = await GroupModel.findById(groupID)
 	const user = await UserModel.findById(userID)

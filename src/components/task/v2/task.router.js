@@ -4,6 +4,7 @@ import {
 	httpCreateNewTask,
 	httpDeleteTaskByID,
 	httpResponseTaskByID,
+	httpResponseUserRequestOfTask,
 	httpUpdateTaskByID,
 	socketGetAllTaskOfUser,
 	socketGetTaskByID,
@@ -18,6 +19,11 @@ taskRouter.put(
 	'/response/:taskID',
 	authorizeRouteMiddleware,
 	httpResponseTaskByID,
+)
+taskRouter.put(
+	'/response/:taskID/reply/:participantID',
+	authorizeRouteMiddleware,
+	httpResponseUserRequestOfTask,
 )
 
 export async function setupTaskSocketListener(socket, user) {

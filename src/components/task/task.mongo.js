@@ -33,6 +33,11 @@ const TaskSchema = new mongoose.Schema({
 				enum: ['approve', 'decline', 'hover', 'no-response'],
 				default: 'no-response',
 			},
+			adminState: {
+				type: String,
+				enum: ['approve', 'decline', 'no-response'],
+				default: 'no-response',
+			},
 		},
 	],
 	admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

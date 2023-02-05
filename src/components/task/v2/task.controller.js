@@ -7,6 +7,7 @@ import {
 	getAllTaskOfUser,
 	getTaskByID,
 	responseTask,
+	responseUserRequestOfTask,
 	updateTaskByID,
 } from '../task.model'
 
@@ -117,6 +118,26 @@ export async function httpResponseTaskByID(req, res) {
 
 	try {
 		const newTask = await responseTask(taskID, userID, message, state)
+		socketSendUpdatedTask(newTask)
+		return res.status(200).send('Your request has been accepted')
+	} catch (error) {
+		if (error.code == 403) return res.status(403).send('Forbidden')
+		return res.status(500).send('Server error: ' + error.message)
+	}
+}
+
+export async function httpResponseUserRequestOfTask(req, res) {
+	const { taskID, participantID } = req.params
+	const userID = req.user._id
+	const { state } = req.body || {}
+
+	try {
+		const newTask = await responseUserRequestOfTask(
+			taskID,
+			userID,
+			participantID,
+			state,
+		)
 		socketSendUpdatedTask(newTask)
 		return res.status(200).send('Your request has been accepted')
 	} catch (error) {
