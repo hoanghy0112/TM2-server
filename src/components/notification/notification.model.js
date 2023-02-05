@@ -3,6 +3,7 @@ import UserModel from '../user/user.mongo'
 import GroupModel from '../group/group.mongo'
 import GroupTaskModel from '../groupTask/groupTask.mongo'
 import io from '../../../bin/socketServer'
+import TaskModel from '../task/task.mongo'
 
 export async function createNotificationForCreateAndUpdateTask(
 	userID,
@@ -62,7 +63,7 @@ export async function createNotificationForInviteToGroup(userID, groupID) {
 	const admin = await UserModel.findById(String(group.admin))
 
 	const notification = await createNewNotification({
-		content: `${admin.familyName} ${admin.givenName} đã mời bạn tham gia nhóm ${group.name}`,
+		content: `${admin.familyName} ${admin.givenName} has invited you to join ${group.name}`,
 		thumbnail: admin.photo,
 		belongTo: userID,
 		time: new Date(),
@@ -106,7 +107,7 @@ export async function createNotificationForJoinGroup(userID, groupID) {
 	const user = await UserModel.findById(userID)
 
 	const notification = await createNewNotification({
-		content: `Bạn vừa được thêm vào nhóm ${group.name}`,
+		content: `You has been added to group "${group.name}", view group now`,
 		thumbnail: user.photo,
 		belongTo: userID,
 		time: new Date(),
@@ -153,9 +154,10 @@ export async function createNotificationForJoinAndOutGroup(
 
 export async function createNotificationForInviteToTask(taskID, userID) {
 	const user = await UserModel.findById(userID)
+	const task = await TaskModel.findById(taskID)
 
 	const notification = await createNewNotification({
-		content: `Bạn vừa được thêm vào một task mới`,
+		content: `You has been add to task "${task.title}"`,
 		thumbnail: user.photo,
 		belongTo: userID,
 		time: new Date(),
