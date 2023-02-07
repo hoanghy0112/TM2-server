@@ -16,16 +16,23 @@ export function authorizeRouteMiddleware(req, res, next) {
 			if (!user) {
 				const userProfile = await getAuth(firebaseApp).getUser(uid)
 
-				const profile = {
-					userID: userProfile.uid,
-					givenName: userProfile?.displayName.split(' ')[0] || '',
-					familyName:
-						userProfile?.displayName.split(' ').slice(1).join(' ') || '',
-					displayName: userProfile?.displayName,
-					engName: removeVietnameseTones(userProfile?.displayName || ''),
-					photo: userProfile?.photoURL || '',
-					email: userProfile?.email || '',
-				}
+				const profile = userProfile?.displayName
+					? {
+							userID: userProfile.uid,
+							givenName: userProfile?.displayName?.split(' ')[0] || '',
+							familyName:
+								userProfile?.displayName
+									?.split(' ')
+									.slice(1)
+									.join(' ') || '',
+							displayName: userProfile?.displayName,
+							engName: removeVietnameseTones(
+								userProfile?.displayName || '',
+							),
+							photo: userProfile?.photoURL || '',
+							email: userProfile?.email || '',
+					  }
+					: {}
 				user = await createUserInfo(profile)
 			}
 

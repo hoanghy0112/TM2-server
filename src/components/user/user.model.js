@@ -60,12 +60,12 @@ export async function addNewTaskToUser(user, task) {
 }
 
 export async function createUserInfo(userInfo) {
-	const { userID } = userInfo
+	// const { userID } = userInfo
 
 	const userInstance = await UserModel.create(userInfo)
-	const { _id } = userInstance
+	// const { _id } = userInstance
 
-	await UserModel.deleteMany({ userID, _id: { $ne: _id } })
+	// await UserModel.deleteMany({ userID, _id: { $ne: _id } })
 
 	return userInstance
 }

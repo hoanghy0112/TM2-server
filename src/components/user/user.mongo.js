@@ -9,19 +9,19 @@ const UserSchema = new mongoose.Schema(
 		},
 		givenName: {
 			type: String,
-			required: true,
+			required: false,
 		},
 		familyName: {
 			type: String,
-			required: true,
+			required: false,
 		},
 		displayName: {
 			type: String,
-			required: true,
+			required: false,
 		},
 		engName: {
 			type: String,
-			required: true,
+			required: false,
 		},
 		photo: {
 			type: String,
