@@ -99,7 +99,9 @@ export async function httpDeleteTaskByID(req, res) {
 	const userID = req.user._id
 
 	try {
+		socketDeleteBusyTime(taskID)
 		const deletedTask = await deleteTaskByID(userID, taskID)
+		// console.log({ deletedTask })
 		const groupID = deletedTask?.belongTo
 		if (groupID)
 			io.to(`group-tasks:${groupID}`).emit('delete-task', deletedTask._id)
@@ -168,7 +170,7 @@ function socketSendDeleteTask(taskID, userIDs) {
 	})
 
 	io.to(`task:${taskID}`).emit('delete-task', taskID)
-	socketDeleteBusyTime(taskID)
+	// socketDeleteBusyTime(taskID)
 }
 
 async function socketUpdateBusyTime(task) {

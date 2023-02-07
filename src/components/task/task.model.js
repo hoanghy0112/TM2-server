@@ -91,6 +91,7 @@ export async function updateTaskByID(userID, taskID, taskData) {
 
 export async function deleteTaskByID(userID, taskID) {
 	const task = await TaskModel.findById(taskID)
+	// console.log({ task, userID, taskID })
 	const deletedTask = await TaskModel.findOneAndDelete({
 		$and: [
 			{ _id: taskID },

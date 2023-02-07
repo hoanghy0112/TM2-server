@@ -53,23 +53,28 @@ TaskModel.watch().on('change', async (data) => {
 	const { operationType } = data
 	console.log(data)
 
-	if (operationType === 'insert') {
-		const newTask = data.fullDocument
+	try {
+		if (operationType === 'insert') {
+			const newTask = data.fullDocument
 
-		addNewTaskToUser(newTask, newTask.participants)
-		if (newTask?.belongTo) await addNewTaskToGroup(newTask, newTask.belongTo)
-	} else if (operationType === 'delete') {
-		const { _id } = data.documentKey
+			addNewTaskToUser(newTask, newTask.participants)
+			if (newTask?.belongTo)
+				await addNewTaskToGroup(newTask, newTask.belongTo)
+		} else if (operationType === 'delete') {
+			const { _id } = data.documentKey
 
-		deleteTaskFromUser(_id)
-		deleteTaskFromGroup(_id)
-	} else {
-		const { _id } = data.documentKey
-		const { updatedFields } = data.updateDescription
+			deleteTaskFromUser(_id)
+			deleteTaskFromGroup(_id)
+		} else {
+			const { _id } = data.documentKey
+			const { updatedFields } = data.updateDescription
 
-		const { participants } = updatedFields
+			const { participants } = updatedFields
 
-		if (participants) updateParticipantsOfTask(_id, participants)
+			if (participants) updateParticipantsOfTask(_id, participants)
+		}
+	} catch (error) {
+		console.log({ error })
 	}
 })
 
