@@ -85,7 +85,7 @@ export async function createNotificationForRemoveFromGroup(userID, groupID) {
 	const admin = await UserModel.findById(String(group.admin))
 
 	const notification = await createNewNotification({
-		content: `${admin.familyName} ${admin.givenName} đã đưa bạn ra khỏi nhóm ${group.name}`,
+		content: `${admin.familyName} ${admin.givenName} has removed you from ${group.name}`,
 		thumbnail: admin.photo,
 		belongTo: userID,
 		time: new Date(),

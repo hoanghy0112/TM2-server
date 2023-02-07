@@ -83,6 +83,8 @@ export async function findUserByName(name) {
 }
 
 export async function getUserInfoByID(userID) {
+	if (userID === 'undefined') throw 'Not found'
+
 	return await UserModel.findById(
 		userID,
 		'givenName familyName email photo groups',

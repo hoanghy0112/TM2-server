@@ -6,6 +6,7 @@ import {
 	createNotificationForInviteToGroup,
 	createNotificationForJoinAndOutGroup,
 	createNotificationForJoinGroup,
+	createNotificationForRemoveFromGroup,
 } from '../notification/notification.model'
 import { deleteTaskByID } from '../task/task.model'
 
@@ -119,17 +120,22 @@ export async function addUserToGroup(userID, groupID) {
 }
 
 export async function removeUserFromGroup(userID, groupID) {
-	await GroupModel.findByIdAndUpdate(groupID, {
-		$pull: {
-			users: userID,
+	const newGroup = await GroupModel.findByIdAndUpdate(
+		groupID,
+		{
+			$pull: {
+				users: userID,
+			},
 		},
-	})
+		{ new: true },
+	)
 	await UserModel.findByIdAndUpdate(userID, {
 		$pull: {
 			groups: groupID,
 		},
 	})
-	await createNotificationForJoinAndOutGroup(userID, groupID, false)
+	await createNotificationForRemoveFromGroup(userID, groupID)
+	return newGroup
 }
 
 export async function updateGroupByID(groupID, groupData) {

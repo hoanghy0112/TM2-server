@@ -169,13 +169,13 @@ export async function httpRemoveUserFromGroup(req, res) {
 
 	if (!group) return res.status(400).send('Bad Request')
 
-	if (!userID.equals(group.admin))
+	if (userID != memberID && !userID.equals(group.admin))
 		return res.status(400).send('You are not admin')
 
 	try {
-		await removeUserFromGroup(memberID, groupID)
+		const newGroup = await removeUserFromGroup(memberID, groupID)
 
-		updateGroupInfoToSocketByID(groupID)
+		updateGroupInfoToSocketByID(groupID, newGroup)
 
 		return res.status(200).send('Removed user')
 	} catch (error) {
@@ -199,8 +199,6 @@ export async function httpUpdateGroup(req, res) {
 
 	try {
 		const newGroup = await updateGroupByID(groupID, groupData)
-		// console.log({ newGroup })
-		// const memberIDs = [newGroup.users, newGroup.admin]
 		updateGroupInfoToSocketByID(groupID, newGroup)
 
 		return res.status(200).send('Update Successfully')
