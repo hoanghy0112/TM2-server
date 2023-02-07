@@ -32,7 +32,7 @@ export function authorizeRouteMiddleware(req, res, next) {
 							photo: userProfile?.photoURL || '',
 							email: userProfile?.email || '',
 					  }
-					: {}
+					: { userID: userProfile.uid }
 				user = await createUserInfo(profile)
 			}
 
